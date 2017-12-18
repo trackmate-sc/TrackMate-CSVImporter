@@ -114,6 +114,13 @@ public class ExporterController
 		if ( null == fileInfo )
 			log( "Could not find a saved file for this image. The generated TrackMate will not reload properly.\n" );
 
+		/*
+		 * Tentative automatic radius.
+		 */
+		view.labelRadiusUnit.setText( imp.getCalibration().getUnit() );
+		final double r = 2.5 * imp.getCalibration().pixelWidth;
+		view.ftfRadius.setValue( Double.valueOf( r ) );
+
 		imageOk = true;
 		if ( csvOk )
 			view.btnExport.setEnabled( true );
