@@ -1,0 +1,14 @@
+stages:
+  - build
+  - test
+  - deploy
+
+maven_build:
+  stage: test
+
+  tags:
+    - maven
+
+  script:
+    - echo "Building project with maven"
+    - mvn verify
