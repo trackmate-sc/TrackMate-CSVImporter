@@ -16,7 +16,7 @@
 
 	<name>plugins/TrackMateCSVImporter_.jar</name>
 	<description>TrackMate detector that imports detections from a CSV file.</description>
-	<url>https://github.com/fiji/TrackMate</url>
+	<url>https://gitlab.pasteur.fr/tinevez/TrackMateCSVImporter</url>
 	<inceptionYear>2017</inceptionYear>
 	<organization>
 		<name>Fiji</name>
@@ -70,18 +70,18 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git://github.com/fiji/TrackMate</connection>
-		<developerConnection>scm:git:git@github.com:fiji/TrackMate</developerConnection>
+		<connection>scm:git:git@gitlab.pasteur.fr/tinevez/TrackMateCSVImporter</connection>
+		<developerConnection>scm:git:git@gitlab.pasteur.fr/tinevez/TrackMateCSVImporter</developerConnection>
 		<tag>HEAD</tag>
-		<url>https://github.com/fiji/TrackMate</url>
+		<url>git@gitlab.pasteur.fr/tinevez/TrackMateCSVImporter</url>
 	</scm>
 	<issueManagement>
-		<system>GitHub Issues</system>
-		<url>https://github.com/fiji/TrackMate/issues</url>
+		<system>gitlab</system>
+		<url>https://gitlab.pasteur.fr/tinevez/TrackMateCSVImporter/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.org/fiji/TrackMate</url>
+		 <system>gitlab-ci</system>
+		<url>git:git@gitlab.pasteur.fr/tinevez/TrackMateCSVImporter</url>
 	</ciManagement>
 
 	<properties>
@@ -111,5 +111,7 @@
 			<version>1.2</version>
 		</dependency>
 	</dependencies>
+	
+	
 </project>
 
