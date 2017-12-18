@@ -166,7 +166,7 @@ public class TrackMateExporter implements Algorithm
 				final double y = Double.parseDouble( record.get( ycol ) );
 				final double z = Double.parseDouble( record.get( zcol ) );
 				// 1-based to 0-based.
-				final int t = Integer.parseInt( record.get( framecol ) ) - 1;
+				final int t = Integer.parseInt( record.get( framecol ) );
 
 				double q = 1.;
 				if ( importQuality )
