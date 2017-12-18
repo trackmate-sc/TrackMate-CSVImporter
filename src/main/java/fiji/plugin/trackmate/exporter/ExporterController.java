@@ -82,7 +82,8 @@ public class ExporterController
 			fieldMap.put( KEY_ID_COLUMN_NAME, Integer.valueOf( view.comboBoxIDCol.getSelectedIndex() ) );
 
 		final ImagePlus imp = ( ImagePlus ) view.comboBoxImp.getSelectedItem();
-		final TrackMateExporter exporter = new TrackMateExporter( filePath, fieldMap, imp );
+		final double radius = ( ( Number ) view.ftfRadius.getValue() ).doubleValue();
+		final TrackMateExporter exporter = new TrackMateExporter( filePath, fieldMap, radius, imp );
 		if ( !exporter.checkInput() || !exporter.process() )
 		{
 			error( "Error importing CSV file:\n" + exporter.getErrorMessage() );

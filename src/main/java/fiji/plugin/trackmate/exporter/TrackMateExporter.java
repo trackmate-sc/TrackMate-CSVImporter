@@ -61,10 +61,13 @@ public class TrackMateExporter implements Algorithm
 
 	private String errorMessage;
 
-	public TrackMateExporter( final String filePath, final Map< String, Integer > fieldMap, final ImagePlus imp )
+	private final double radius;
+
+	public TrackMateExporter( final String filePath, final Map< String, Integer > fieldMap, final double radius, final ImagePlus imp )
 	{
 		this.filePath = filePath;
 		this.fieldMap = fieldMap;
+		this.radius = radius;
 		this.imp = imp;
 	}
 
@@ -157,7 +160,6 @@ public class TrackMateExporter implements Algorithm
 		 * Iterate over records.
 		 */
 
-		final double radius = 2.; // TODO
 		for ( final CSVRecord record : records )
 		{
 			try
