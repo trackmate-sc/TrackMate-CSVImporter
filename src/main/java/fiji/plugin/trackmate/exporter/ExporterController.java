@@ -54,6 +54,7 @@ public class ExporterController
 		view.comboBoxImp.addActionListener( ( e ) -> checkImage() );
 		checkImage();
 		final JFrame frame = new JFrame( "TrackMate CSV importer" );
+		frame.setIconImage( ExporterPanel.ICON.getImage() );
 		frame.getContentPane().add( view );
 		frame.setSize( 600, 600 );
 		frame.setVisible( true );

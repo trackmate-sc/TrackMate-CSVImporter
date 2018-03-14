@@ -10,6 +10,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.text.NumberFormat;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -21,9 +22,10 @@ import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
-import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
@@ -34,6 +36,8 @@ import ij.ImagePlus;
 public class ExporterPanel extends JPanel
 {
 	private static final long serialVersionUID = 1L;
+
+	static final ImageIcon ICON = new ImageIcon( ExporterPanel.class.getResource( "TrackMateCSVImporterLogo.png" ) );
 
 	final JTextField textFieldFile;
 
@@ -75,10 +79,12 @@ public class ExporterPanel extends JPanel
 		setLayout( new BorderLayout() );
 
 		final JSplitPane splitPane = new JSplitPane();
+		splitPane.setBorder( null );
 		splitPane.setResizeWeight( 0.5 );
 		add( splitPane );
 
 		final JPanel panelControl = new JPanel();
+		panelControl.setBorder( null );
 		splitPane.setLeftComponent( panelControl );
 		final GridBagLayout layout = new GridBagLayout();
 		layout.rowHeights = new int[] { 5, 5, 5, 5, 5, 5, 0, 5, 5, 5, 5, 5, 5, 5, 5 };
@@ -317,14 +323,14 @@ public class ExporterPanel extends JPanel
 		panelLog.setLayout( new BorderLayout() );
 
 		jTextPaneLog = new JTextPane();
+		jTextPaneLog.setBorder( null );
 		jTextPaneLog.setEditable( false );
 		jTextPaneLog.setForeground( Color.BLACK );
-		jTextPaneLog.setOpaque( false );
 		jTextPaneLog.setFont( smallFont );
 
 		final JScrollPane scrollPane = new JScrollPane( jTextPaneLog );
-		scrollPane.setBorder( null );
-		scrollPane.setHorizontalScrollBarPolicy( ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER );
+		scrollPane.setOpaque( false );
+		scrollPane.setBorder( new TitledBorder( new LineBorder( new Color( 128, 128, 128 ) ), "Import log.", TitledBorder.LEADING, TitledBorder.TOP, null, null ) );
 		panelLog.add( scrollPane, BorderLayout.CENTER );
 		jTextPaneLog.setBackground( getBackground() );
 
@@ -340,7 +346,7 @@ public class ExporterPanel extends JPanel
 		add( panelTitle, BorderLayout.NORTH );
 		panelTitle.setLayout( new BorderLayout( 0, 0 ) );
 
-		final JLabel lblTrackmateCsvImporter = new JLabel( "TrackMate CSV importer" );
+		final JLabel lblTrackmateCsvImporter = new JLabel( "TrackMate CSV importer", ICON, JLabel.CENTER );
 		lblTrackmateCsvImporter.setFont( bigFont );
 		lblTrackmateCsvImporter.setPreferredSize( new Dimension( 100, 50 ) );
 		lblTrackmateCsvImporter.setHorizontalAlignment( SwingConstants.CENTER );
