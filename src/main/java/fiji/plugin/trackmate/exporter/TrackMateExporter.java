@@ -19,7 +19,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NavigableSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -53,6 +55,8 @@ import net.imglib2.algorithm.Algorithm;
 public class TrackMateExporter implements Algorithm
 {
 
+	public static final String PLUGIN_VERSION = "0.0.5-SNAPSHOT";
+
 	private final String filePath;
 
 	private final ImagePlus imp;
@@ -62,6 +66,8 @@ public class TrackMateExporter implements Algorithm
 	private String errorMessage;
 
 	private final double radius;
+
+	private Consumer< String > logger = str -> {};
 
 	public TrackMateExporter( final String filePath, final Map< String, Integer > fieldMap, final double radius, final ImagePlus imp )
 	{
@@ -160,8 +166,11 @@ public class TrackMateExporter implements Algorithm
 		 * Iterate over records.
 		 */
 
+		logger.accept( String.format( "Parsing records.\n" ) );
+		long nRecords = 0;
 		for ( final CSVRecord record : records )
 		{
+			nRecords++;
 			try
 			{
 				final double x = Double.parseDouble( record.get( xcol ) );
@@ -226,6 +235,9 @@ public class TrackMateExporter implements Algorithm
 				continue;
 			}
 		}
+		logger.accept( String.format( "Parsing done. Iterated over %d records.\n", nRecords ) );
+		if ( importTrack )
+			logger.accept( String.format( "Found %d tracks.\n", tracks.size() ) );
 
 		/*
 		 * Generate a Model object.
@@ -233,6 +245,11 @@ public class TrackMateExporter implements Algorithm
 
 		final SpotCollection sc = SpotCollection.fromMap( spots );
 		sc.setVisible( true );
+		logger.accept( String.format( "Found %d spots.\n", sc.getNSpots( true ) ) );
+
+		final NavigableSet< Integer > frames = sc.keySet();
+		for ( final Integer frame : frames )
+			logger.accept( String.format( "- frame %4d, n spots = %d\n", frame, sc.getNSpots( frame, true ) ) );
 
 		final Model model = new Model();
 		model.setPhysicalUnits( "um", imp.getCalibration().getTimeUnit() );
@@ -241,6 +258,7 @@ public class TrackMateExporter implements Algorithm
 
 		if ( importTrack )
 		{
+			logger.accept( "Importing tracks." );
 			final Set< Integer > trackIDs = tracks.keySet();
 			for ( final Integer trackID : trackIDs )
 			{
@@ -256,6 +274,8 @@ public class TrackMateExporter implements Algorithm
 					source = target;
 				}
 			}
+			logger.accept( " Done.\n" );
+
 		}
 
 		/*
@@ -315,5 +335,10 @@ public class TrackMateExporter implements Algorithm
 	public String getErrorMessage()
 	{
 		return errorMessage;
+	}
+
+	public void setLogger( final Consumer< String > logger )
+	{
+		this.logger = logger;
 	}
 }
