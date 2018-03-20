@@ -56,7 +56,7 @@ public class ExporterController
 		final JFrame frame = new JFrame( "TrackMate CSV importer" );
 		frame.setIconImage( ExporterPanel.ICON.getImage() );
 		frame.getContentPane().add( view );
-		frame.setSize( 600, 600 );
+		frame.pack();
 		frame.setVisible( true );
 	}
 
@@ -84,7 +84,7 @@ public class ExporterController
 
 		final ImagePlus imp = ( ImagePlus ) view.comboBoxImp.getSelectedItem();
 		final double radius = ( ( Number ) view.ftfRadius.getValue() ).doubleValue();
-		final TrackMateExporter exporter = new TrackMateExporter( filePath, fieldMap, radius, imp );
+		final TrackMateExporter exporter = new TrackMateExporter( filePath, fieldMap, radius, view.chckbxComputeFeatures.isSelected(), imp );
 		exporter.setLogger( str -> info( str ) );
 		if ( !exporter.checkInput() || !exporter.process() )
 		{

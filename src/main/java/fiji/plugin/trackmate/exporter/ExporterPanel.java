@@ -65,11 +65,14 @@ public class ExporterPanel extends JPanel
 
 	final JCheckBox chckbxImportTracks;
 
+	final JCheckBox chckbxComputeFeatures;
+
 	final JLabel labelRadiusUnit;
 
 	final JFormattedTextField ftfRadius;
 
 	private final JTextPane jTextPaneLog;
+
 
 	public ExporterPanel()
 	{
@@ -87,7 +90,7 @@ public class ExporterPanel extends JPanel
 		panelControl.setBorder( null );
 		splitPane.setLeftComponent( panelControl );
 		final GridBagLayout layout = new GridBagLayout();
-		layout.rowHeights = new int[] { 5, 5, 5, 5, 5, 5, 0, 5, 5, 5, 5, 5, 5, 5, 5 };
+		layout.rowHeights = new int[] { 5, 5, 5, 5, 0, 5, 5, 0, 5, 5, 5, 5, 5, 5, 5, 5 };
 		layout.columnWeights = new double[] { 1.0, 1.0, 0.0, 1.0, 1.0 };
 		layout.columnWidths = new int[] { 79, 50, 30, 50, 30 };
 		panelControl.setLayout( layout );
@@ -136,13 +139,23 @@ public class ExporterPanel extends JPanel
 		gbc_comboBoxImp.gridy = 3;
 		panelControl.add( comboBoxImp, gbc_comboBoxImp );
 
+		chckbxComputeFeatures = new JCheckBox( "Compute all features?" );
+		chckbxComputeFeatures.setSelected( true );
+		final GridBagConstraints gbc_chckbxComputeFeatures = new GridBagConstraints();
+		gbc_chckbxComputeFeatures.anchor = GridBagConstraints.EAST;
+		gbc_chckbxComputeFeatures.gridwidth = 5;
+		gbc_chckbxComputeFeatures.insets = new Insets( 0, 0, 5, 0 );
+		gbc_chckbxComputeFeatures.gridx = 0;
+		gbc_chckbxComputeFeatures.gridy = 4;
+		panelControl.add( chckbxComputeFeatures, gbc_chckbxComputeFeatures );
+
 		chckbxImportTracks = new JCheckBox( "Import tracks?" );
 		final GridBagConstraints gbc_chckbxImportTracks = new GridBagConstraints();
 		gbc_chckbxImportTracks.anchor = GridBagConstraints.EAST;
 		gbc_chckbxImportTracks.gridwidth = 5;
 		gbc_chckbxImportTracks.insets = new Insets( 5, 5, 5, 0 );
 		gbc_chckbxImportTracks.gridx = 0;
-		gbc_chckbxImportTracks.gridy = 4;
+		gbc_chckbxImportTracks.gridy = 5;
 		panelControl.add( chckbxImportTracks, gbc_chckbxImportTracks );
 
 		final JSeparator separator = new JSeparator();
@@ -151,7 +164,7 @@ public class ExporterPanel extends JPanel
 		gbc_separator.gridwidth = 3;
 		gbc_separator.insets = new Insets( 5, 5, 5, 5 );
 		gbc_separator.gridx = 0;
-		gbc_separator.gridy = 5;
+		gbc_separator.gridy = 6;
 		panelControl.add( separator, gbc_separator );
 
 		final JLabel lblRadius = new JLabel( "Radius:" );
@@ -159,7 +172,7 @@ public class ExporterPanel extends JPanel
 		gbc_lblRadius.anchor = GridBagConstraints.EAST;
 		gbc_lblRadius.insets = new Insets( 0, 0, 5, 5 );
 		gbc_lblRadius.gridx = 0;
-		gbc_lblRadius.gridy = 6;
+		gbc_lblRadius.gridy = 7;
 		panelControl.add( lblRadius, gbc_lblRadius );
 
 		ftfRadius = new JFormattedTextField( NumberFormat.getNumberInstance() );
@@ -169,7 +182,7 @@ public class ExporterPanel extends JPanel
 		gbc_ftfRadius.insets = new Insets( 5, 5, 5, 5 );
 		gbc_ftfRadius.fill = GridBagConstraints.HORIZONTAL;
 		gbc_ftfRadius.gridx = 1;
-		gbc_ftfRadius.gridy = 6;
+		gbc_ftfRadius.gridy = 7;
 		panelControl.add( ftfRadius, gbc_ftfRadius );
 
 		labelRadiusUnit = new JLabel();
@@ -177,7 +190,7 @@ public class ExporterPanel extends JPanel
 		gbc_labelRadiusUnitl.anchor = GridBagConstraints.WEST;
 		gbc_labelRadiusUnitl.insets = new Insets( 0, 0, 5, 5 );
 		gbc_labelRadiusUnitl.gridx = 3;
-		gbc_labelRadiusUnitl.gridy = 6;
+		gbc_labelRadiusUnitl.gridy = 7;
 		panelControl.add( labelRadiusUnit, gbc_labelRadiusUnitl );
 
 		final JLabel lblXColumn = new JLabel( "X column:" );
@@ -185,7 +198,7 @@ public class ExporterPanel extends JPanel
 		gbc_lblXColumn.anchor = GridBagConstraints.EAST;
 		gbc_lblXColumn.insets = new Insets( 5, 5, 5, 5 );
 		gbc_lblXColumn.gridx = 0;
-		gbc_lblXColumn.gridy = 7;
+		gbc_lblXColumn.gridy = 8;
 		panelControl.add( lblXColumn, gbc_lblXColumn );
 
 		comboBoxXCol = new JComboBox<>();
@@ -194,7 +207,7 @@ public class ExporterPanel extends JPanel
 		gbc_comboBoxX.insets = new Insets( 5, 5, 5, 0 );
 		gbc_comboBoxX.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBoxX.gridx = 1;
-		gbc_comboBoxX.gridy = 7;
+		gbc_comboBoxX.gridy = 8;
 		panelControl.add( comboBoxXCol, gbc_comboBoxX );
 
 		final JLabel lblYColumn = new JLabel( "Y column:" );
@@ -202,7 +215,7 @@ public class ExporterPanel extends JPanel
 		gbc_lblYColumn.anchor = GridBagConstraints.EAST;
 		gbc_lblYColumn.insets = new Insets( 5, 5, 5, 5 );
 		gbc_lblYColumn.gridx = 0;
-		gbc_lblYColumn.gridy = 8;
+		gbc_lblYColumn.gridy = 9;
 		panelControl.add( lblYColumn, gbc_lblYColumn );
 
 		comboBoxYCol = new JComboBox<>();
@@ -211,7 +224,7 @@ public class ExporterPanel extends JPanel
 		gbc_comboBoxY.insets = new Insets( 5, 5, 5, 0 );
 		gbc_comboBoxY.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBoxY.gridx = 1;
-		gbc_comboBoxY.gridy = 8;
+		gbc_comboBoxY.gridy = 9;
 		panelControl.add( comboBoxYCol, gbc_comboBoxY );
 
 		final JLabel lblZColumn = new JLabel( "Z column:" );
@@ -219,7 +232,7 @@ public class ExporterPanel extends JPanel
 		gbc_lblZColumn.anchor = GridBagConstraints.EAST;
 		gbc_lblZColumn.insets = new Insets( 5, 5, 5, 5 );
 		gbc_lblZColumn.gridx = 0;
-		gbc_lblZColumn.gridy = 9;
+		gbc_lblZColumn.gridy = 10;
 		panelControl.add( lblZColumn, gbc_lblZColumn );
 
 		comboBoxZCol = new JComboBox<>();
@@ -228,7 +241,7 @@ public class ExporterPanel extends JPanel
 		gbc_comboBoxZ.insets = new Insets( 5, 5, 5, 0 );
 		gbc_comboBoxZ.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBoxZ.gridx = 1;
-		gbc_comboBoxZ.gridy = 9;
+		gbc_comboBoxZ.gridy = 10;
 		panelControl.add( comboBoxZCol, gbc_comboBoxZ );
 
 		final JLabel lblFrameColumn = new JLabel( "Frame column:" );
@@ -236,7 +249,7 @@ public class ExporterPanel extends JPanel
 		gbc_lblFrameColumn.anchor = GridBagConstraints.EAST;
 		gbc_lblFrameColumn.insets = new Insets( 5, 5, 5, 5 );
 		gbc_lblFrameColumn.gridx = 0;
-		gbc_lblFrameColumn.gridy = 10;
+		gbc_lblFrameColumn.gridy = 11;
 		panelControl.add( lblFrameColumn, gbc_lblFrameColumn );
 
 		comboBoxFrameCol = new JComboBox<>();
@@ -245,7 +258,7 @@ public class ExporterPanel extends JPanel
 		gbc_comboBoxFrame.insets = new Insets( 5, 5, 5, 0 );
 		gbc_comboBoxFrame.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBoxFrame.gridx = 1;
-		gbc_comboBoxFrame.gridy = 10;
+		gbc_comboBoxFrame.gridy = 11;
 		panelControl.add( comboBoxFrameCol, gbc_comboBoxFrame );
 
 		final JLabel lblTrackColumn = new JLabel( "Track column:" );
@@ -253,7 +266,7 @@ public class ExporterPanel extends JPanel
 		gbc_lblTrackColumn.anchor = GridBagConstraints.EAST;
 		gbc_lblTrackColumn.insets = new Insets( 5, 5, 5, 5 );
 		gbc_lblTrackColumn.gridx = 0;
-		gbc_lblTrackColumn.gridy = 11;
+		gbc_lblTrackColumn.gridy = 12;
 		panelControl.add( lblTrackColumn, gbc_lblTrackColumn );
 
 		comboBoxTrackCol = new JComboBox<>();
@@ -262,7 +275,7 @@ public class ExporterPanel extends JPanel
 		gbc_comboBoxTrackCol.insets = new Insets( 5, 5, 5, 0 );
 		gbc_comboBoxTrackCol.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBoxTrackCol.gridx = 1;
-		gbc_comboBoxTrackCol.gridy = 11;
+		gbc_comboBoxTrackCol.gridy = 12;
 		panelControl.add( comboBoxTrackCol, gbc_comboBoxTrackCol );
 		chckbxImportTracks.addActionListener( ( e ) -> comboBoxTrackCol.setEnabled( chckbxImportTracks.isSelected() ) );
 		comboBoxTrackCol.setEnabled( chckbxImportTracks.isSelected() );
@@ -272,7 +285,7 @@ public class ExporterPanel extends JPanel
 		gbc_lblQualityColumn.anchor = GridBagConstraints.EAST;
 		gbc_lblQualityColumn.insets = new Insets( 5, 5, 5, 5 );
 		gbc_lblQualityColumn.gridx = 0;
-		gbc_lblQualityColumn.gridy = 12;
+		gbc_lblQualityColumn.gridy = 13;
 		panelControl.add( lblQualityColumn, gbc_lblQualityColumn );
 
 		comboBoxQualityCol = new JComboBox<>();
@@ -281,7 +294,7 @@ public class ExporterPanel extends JPanel
 		gbc_comboBoxQuality.insets = new Insets( 5, 5, 5, 0 );
 		gbc_comboBoxQuality.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBoxQuality.gridx = 1;
-		gbc_comboBoxQuality.gridy = 12;
+		gbc_comboBoxQuality.gridy = 13;
 		panelControl.add( comboBoxQualityCol, gbc_comboBoxQuality );
 
 		final JLabel lblNameColumn = new JLabel( "Name column:" );
@@ -289,7 +302,7 @@ public class ExporterPanel extends JPanel
 		gbc_lblNameColumn.anchor = GridBagConstraints.EAST;
 		gbc_lblNameColumn.insets = new Insets( 5, 5, 5, 5 );
 		gbc_lblNameColumn.gridx = 0;
-		gbc_lblNameColumn.gridy = 13;
+		gbc_lblNameColumn.gridy = 14;
 		panelControl.add( lblNameColumn, gbc_lblNameColumn );
 
 		comboBoxNameCol = new JComboBox<>();
@@ -298,7 +311,7 @@ public class ExporterPanel extends JPanel
 		gbc_comboBoxName.insets = new Insets( 5, 5, 5, 0 );
 		gbc_comboBoxName.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBoxName.gridx = 1;
-		gbc_comboBoxName.gridy = 13;
+		gbc_comboBoxName.gridy = 14;
 		panelControl.add( comboBoxNameCol, gbc_comboBoxName );
 
 		final JLabel lblIdColumn = new JLabel( "ID column:" );
@@ -306,7 +319,7 @@ public class ExporterPanel extends JPanel
 		gbc_lblIdColumn.anchor = GridBagConstraints.EAST;
 		gbc_lblIdColumn.insets = new Insets( 5, 5, 0, 5 );
 		gbc_lblIdColumn.gridx = 0;
-		gbc_lblIdColumn.gridy = 14;
+		gbc_lblIdColumn.gridy = 15;
 		panelControl.add( lblIdColumn, gbc_lblIdColumn );
 
 		comboBoxIDCol = new JComboBox<>();
@@ -315,7 +328,7 @@ public class ExporterPanel extends JPanel
 		gbc_comboBoxID.gridwidth = 4;
 		gbc_comboBoxID.fill = GridBagConstraints.HORIZONTAL;
 		gbc_comboBoxID.gridx = 1;
-		gbc_comboBoxID.gridy = 14;
+		gbc_comboBoxID.gridy = 15;
 		panelControl.add( comboBoxIDCol, gbc_comboBoxID );
 
 		final JPanel panelLog = new JPanel();
@@ -323,6 +336,7 @@ public class ExporterPanel extends JPanel
 		panelLog.setLayout( new BorderLayout() );
 
 		jTextPaneLog = new JTextPane();
+		jTextPaneLog.setPreferredSize( new Dimension( 300, 300 ) );
 		jTextPaneLog.setBorder( null );
 		jTextPaneLog.setEditable( false );
 		jTextPaneLog.setForeground( Color.BLACK );

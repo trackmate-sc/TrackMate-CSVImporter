@@ -34,11 +34,14 @@ import fiji.plugin.trackmate.Spot;
 import fiji.plugin.trackmate.SpotCollection;
 import fiji.plugin.trackmate.TrackMate;
 import fiji.plugin.trackmate.detection.ManualDetectorFactory;
+import fiji.plugin.trackmate.features.edges.EdgeAnalyzer;
 import fiji.plugin.trackmate.features.edges.EdgeTargetAnalyzer;
 import fiji.plugin.trackmate.features.edges.EdgeTimeLocationAnalyzer;
 import fiji.plugin.trackmate.features.edges.EdgeVelocityAnalyzer;
 import fiji.plugin.trackmate.features.manual.ManualEdgeColorAnalyzer;
 import fiji.plugin.trackmate.features.manual.ManualSpotColorAnalyzerFactory;
+import fiji.plugin.trackmate.features.spot.SpotAnalyzerFactory;
+import fiji.plugin.trackmate.features.track.TrackAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackDurationAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackIndexAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackLocationAnalyzer;
@@ -47,6 +50,9 @@ import fiji.plugin.trackmate.features.track.TrackSpotQualityFeatureAnalyzer;
 import fiji.plugin.trackmate.gui.GuiUtils;
 import fiji.plugin.trackmate.gui.TrackMateGUIController;
 import fiji.plugin.trackmate.gui.descriptors.ConfigureViewsDescriptor;
+import fiji.plugin.trackmate.providers.EdgeAnalyzerProvider;
+import fiji.plugin.trackmate.providers.SpotAnalyzerProvider;
+import fiji.plugin.trackmate.providers.TrackAnalyzerProvider;
 import fiji.plugin.trackmate.tracking.ManualTrackerFactory;
 import fiji.plugin.trackmate.visualization.hyperstack.HyperStackDisplayer;
 import ij.ImagePlus;
@@ -67,13 +73,16 @@ public class TrackMateExporter implements Algorithm
 
 	private final double radius;
 
+	private final boolean computeAllFeatures;
+
 	private Consumer< String > logger = str -> {};
 
-	public TrackMateExporter( final String filePath, final Map< String, Integer > fieldMap, final double radius, final ImagePlus imp )
+	public TrackMateExporter( final String filePath, final Map< String, Integer > fieldMap, final double radius, final boolean computeAllFeatures, final ImagePlus imp )
 	{
 		this.filePath = filePath;
 		this.fieldMap = fieldMap;
 		this.radius = radius;
+		this.computeAllFeatures = computeAllFeatures;
 		this.imp = imp;
 	}
 
@@ -292,31 +301,69 @@ public class TrackMateExporter implements Algorithm
 			settings.trackerSettings = settings.trackerFactory.getDefaultSettings();
 		}
 
-		// Spot features.
-		settings.addSpotAnalyzerFactory( new ManualSpotColorAnalyzerFactory<>() );
+		if ( computeAllFeatures )
+		{
 
-		// Edge features.
-		settings.addEdgeAnalyzer( new EdgeTargetAnalyzer() );
-		settings.addEdgeAnalyzer( new EdgeTimeLocationAnalyzer() );
-		settings.addEdgeAnalyzer( new EdgeVelocityAnalyzer() );
-		settings.addEdgeAnalyzer( new ManualEdgeColorAnalyzer() );
+			settings.clearSpotAnalyzerFactories();
+			final SpotAnalyzerProvider spotAnalyzerProvider = new SpotAnalyzerProvider();
+			final List< String > spotAnalyzerKeys = spotAnalyzerProvider.getKeys();
+			for ( final String key : spotAnalyzerKeys )
+			{
+				final SpotAnalyzerFactory< ? > spotFeatureAnalyzer = spotAnalyzerProvider.getFactory( key );
+				settings.addSpotAnalyzerFactory( spotFeatureAnalyzer );
+			}
 
-		// Track features.
-		settings.addTrackAnalyzer( new TrackDurationAnalyzer() );
-		settings.addTrackAnalyzer( new TrackIndexAnalyzer() );
-		settings.addTrackAnalyzer( new TrackLocationAnalyzer() );
-		settings.addTrackAnalyzer( new TrackSpeedStatisticsAnalyzer() );
-		settings.addTrackAnalyzer( new TrackSpotQualityFeatureAnalyzer() );
+			settings.clearEdgeAnalyzers();
+			final EdgeAnalyzerProvider edgeAnalyzerProvider = new EdgeAnalyzerProvider();
+			final List< String > edgeAnalyzerKeys = edgeAnalyzerProvider.getKeys();
+			for ( final String key : edgeAnalyzerKeys )
+			{
+				final EdgeAnalyzer edgeAnalyzer = edgeAnalyzerProvider.getFactory( key );
+				settings.addEdgeAnalyzer( edgeAnalyzer );
+			}
 
+			settings.clearTrackAnalyzers();
+			final TrackAnalyzerProvider trackAnalyzerProvider = new TrackAnalyzerProvider();
+			final List< String > trackAnalyzerKeys = trackAnalyzerProvider.getKeys();
+			for ( final String key : trackAnalyzerKeys )
+			{
+				final TrackAnalyzer trackAnalyzer = trackAnalyzerProvider.getFactory( key );
+				settings.addTrackAnalyzer( trackAnalyzer );
+			}
+		}
+		else
+		{
+			// Spot features.
+			settings.addSpotAnalyzerFactory( new ManualSpotColorAnalyzerFactory<>() );
+
+			// Edge features.
+			settings.addEdgeAnalyzer( new EdgeTargetAnalyzer() );
+			settings.addEdgeAnalyzer( new EdgeTimeLocationAnalyzer() );
+			settings.addEdgeAnalyzer( new EdgeVelocityAnalyzer() );
+			settings.addEdgeAnalyzer( new ManualEdgeColorAnalyzer() );
+
+			// Track features.
+			settings.addTrackAnalyzer( new TrackDurationAnalyzer() );
+			settings.addTrackAnalyzer( new TrackIndexAnalyzer() );
+			settings.addTrackAnalyzer( new TrackLocationAnalyzer() );
+			settings.addTrackAnalyzer( new TrackSpeedStatisticsAnalyzer() );
+			settings.addTrackAnalyzer( new TrackSpotQualityFeatureAnalyzer() );
+		}
+
+		logger.accept( "Added the following features to be computed:\n" + settings.toStringFeatureAnalyzersInfo() );
+		
 		/*
 		 * Generate a TrackMate object and create TrackMate GUI from it.
 		 */
 
+		logger.accept( "Computing features.\n" );
 		final TrackMate trackmate = new TrackMate( model, settings );
 		trackmate.computeSpotFeatures( false );
 		trackmate.computeEdgeFeatures( false );
 		trackmate.computeTrackFeatures( false );
+		logger.accept( "Done.\n" );
 
+		logger.accept( "Launching GUI.\n" );
 		final TrackMateGUIController controller = new TrackMateGUIController( trackmate );
 		GuiUtils.positionWindow( controller.getGUI(), settings.imp.getWindow() );
 		final String guiState = importTrack ? ConfigureViewsDescriptor.KEY : "ChooseTracker";
@@ -327,6 +374,7 @@ public class TrackMateExporter implements Algorithm
 		for ( final String key : displaySettings.keySet() )
 			view.setDisplaySettings( key, displaySettings.get( key ) );
 		view.render();
+		logger.accept( "Export complete.\n" );
 
 		return true;
 	}
