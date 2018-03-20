@@ -62,36 +62,51 @@ public class ExporterController
 
 	private void export()
 	{
-		final String filePath = view.textFieldFile.getText();
-
-		final Map< String, Integer > fieldMap = new HashMap<>();
-		fieldMap.put( KEY_X_COLUMN_NAME, Integer.valueOf( view.comboBoxXCol.getSelectedIndex() ) );
-		fieldMap.put( KEY_Y_COLUMN_NAME, Integer.valueOf( view.comboBoxYCol.getSelectedIndex() ) );
-		fieldMap.put( KEY_Z_COLUMN_NAME, Integer.valueOf( view.comboBoxZCol.getSelectedIndex() ) );
-		fieldMap.put( KEY_FRAME_COLUMN_NAME, Integer.valueOf( view.comboBoxFrameCol.getSelectedIndex() ) );
-
-		if ( view.chckbxImportTracks.isSelected() && view.comboBoxTrackCol.getSelectedItem() != NONE_COLUMN )
-			fieldMap.put( KEY_TRACK_COLUMN_NAME, Integer.valueOf( view.comboBoxTrackCol.getSelectedIndex() ) );
-
-		if ( view.comboBoxQualityCol.getSelectedItem() != NONE_COLUMN )
-			fieldMap.put( KEY_QUALITY_COLUMN_NAME, Integer.valueOf( view.comboBoxQualityCol.getSelectedIndex() ) );
-
-		if ( view.comboBoxNameCol.getSelectedItem() != NONE_COLUMN )
-			fieldMap.put( KEY_NAME_COLUMN_NAME, Integer.valueOf( view.comboBoxNameCol.getSelectedIndex() ) );
-
-		if ( view.comboBoxIDCol.getSelectedItem() != NONE_COLUMN )
-			fieldMap.put( KEY_ID_COLUMN_NAME, Integer.valueOf( view.comboBoxIDCol.getSelectedIndex() ) );
-
-		final ImagePlus imp = ( ImagePlus ) view.comboBoxImp.getSelectedItem();
-		final double radius = ( ( Number ) view.ftfRadius.getValue() ).doubleValue();
-		final TrackMateExporter exporter = new TrackMateExporter( filePath, fieldMap, radius, view.chckbxComputeFeatures.isSelected(), imp );
-		exporter.setLogger( str -> info( str ) );
-		if ( !exporter.checkInput() || !exporter.process() )
+		view.btnExport.setEnabled( false );
+		new Thread( "TrackMate CSV exporter thread" )
 		{
-			error( "Error importing CSV file:\n" + exporter.getErrorMessage() );
-			return;
-		}
-		log( "Export successful.\n" );
+			@Override
+			public void run()
+			{
+				try
+				{
+					final String filePath = view.textFieldFile.getText();
+
+					final Map< String, Integer > fieldMap = new HashMap<>();
+					fieldMap.put( KEY_X_COLUMN_NAME, Integer.valueOf( view.comboBoxXCol.getSelectedIndex() ) );
+					fieldMap.put( KEY_Y_COLUMN_NAME, Integer.valueOf( view.comboBoxYCol.getSelectedIndex() ) );
+					fieldMap.put( KEY_Z_COLUMN_NAME, Integer.valueOf( view.comboBoxZCol.getSelectedIndex() ) );
+					fieldMap.put( KEY_FRAME_COLUMN_NAME, Integer.valueOf( view.comboBoxFrameCol.getSelectedIndex() ) );
+
+					if ( view.chckbxImportTracks.isSelected() && view.comboBoxTrackCol.getSelectedItem() != NONE_COLUMN )
+						fieldMap.put( KEY_TRACK_COLUMN_NAME, Integer.valueOf( view.comboBoxTrackCol.getSelectedIndex() ) );
+
+					if ( view.comboBoxQualityCol.getSelectedItem() != NONE_COLUMN )
+						fieldMap.put( KEY_QUALITY_COLUMN_NAME, Integer.valueOf( view.comboBoxQualityCol.getSelectedIndex() ) );
+
+					if ( view.comboBoxNameCol.getSelectedItem() != NONE_COLUMN )
+						fieldMap.put( KEY_NAME_COLUMN_NAME, Integer.valueOf( view.comboBoxNameCol.getSelectedIndex() ) );
+
+					if ( view.comboBoxIDCol.getSelectedItem() != NONE_COLUMN )
+						fieldMap.put( KEY_ID_COLUMN_NAME, Integer.valueOf( view.comboBoxIDCol.getSelectedIndex() ) );
+
+					final ImagePlus imp = ( ImagePlus ) view.comboBoxImp.getSelectedItem();
+					final double radius = ( ( Number ) view.ftfRadius.getValue() ).doubleValue();
+					final TrackMateExporter exporter = new TrackMateExporter( filePath, fieldMap, radius, view.chckbxComputeFeatures.isSelected(), imp );
+					exporter.setLogger( str -> info( str ) );
+					if ( !exporter.checkInput() || !exporter.process() )
+					{
+						error( "Error importing CSV file:\n" + exporter.getErrorMessage() );
+						return;
+					}
+					log( "Export successful.\n" );
+				}
+				finally
+				{
+					view.btnExport.setEnabled( true );
+				}
+			}
+		}.start();
 	}
 
 	private final boolean checkImage()
