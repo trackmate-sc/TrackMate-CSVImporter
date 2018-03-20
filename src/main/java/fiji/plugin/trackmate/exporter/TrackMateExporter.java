@@ -365,7 +365,7 @@ public class TrackMateExporter implements Algorithm
 		logger.log( "Launching GUI.\n" );
 		final TrackMateGUIController controller = new TrackMateGUIController( trackmate );
 		GuiUtils.positionWindow( controller.getGUI(), settings.imp.getWindow() );
-		final String guiState = importTrack ? ConfigureViewsDescriptor.KEY : "ChooseTracker";
+		final String guiState = importTrack ? ConfigureViewsDescriptor.KEY : "SpotFilter";
 		controller.setGUIStateString( guiState );
 		final HyperStackDisplayer view = new HyperStackDisplayer( model, controller.getSelectionModel(), settings.imp );
 		controller.getGuimodel().addView( view );
