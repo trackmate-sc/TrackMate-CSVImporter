@@ -31,6 +31,7 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+import fiji.plugin.trackmate.Logger;
 import ij.ImagePlus;
 
 public class ExporterPanel extends JPanel
@@ -73,6 +74,7 @@ public class ExporterPanel extends JPanel
 
 	private final JTextPane jTextPaneLog;
 
+	private final ExporterLogger logger;
 
 	public ExporterPanel()
 	{
@@ -366,9 +368,41 @@ public class ExporterPanel extends JPanel
 		lblTrackmateCsvImporter.setHorizontalAlignment( SwingConstants.CENTER );
 		panelTitle.add( lblTrackmateCsvImporter, BorderLayout.NORTH );
 
+		this.logger = new ExporterLogger();
+
 	}
 
-	void log( final String message, final Color color )
+	public Logger getLogger()
+	{
+		return logger;
+	}
+
+	private class ExporterLogger extends Logger
+	{
+		@Override
+		public void log( final String message, final Color color )
+		{
+			ExporterPanel.this.log( message, color );
+		}
+
+		@Override
+		public void error( final String message )
+		{
+			ExporterPanel.this.log( message, Logger.ERROR_COLOR );
+		}
+
+		@Override
+		public void setProgress( final double val )
+		{}
+
+		@Override
+		public void setStatus( final String status )
+		{
+			ExporterPanel.this.log( status, Logger.BLUE_COLOR );
+		}
+	}
+
+	private void log( final String message, final Color color )
 	{
 		SwingUtilities.invokeLater( new Runnable()
 		{

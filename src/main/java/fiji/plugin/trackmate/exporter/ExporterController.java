@@ -10,7 +10,6 @@ import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Y_C
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Z_COLUMN_NAME;
 import static fiji.plugin.trackmate.gui.TrackMateWizard.TRACKMATE_ICON;
 
-import java.awt.Color;
 import java.awt.FileDialog;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -93,7 +92,7 @@ public class ExporterController
 					final ImagePlus imp = ( ImagePlus ) view.comboBoxImp.getSelectedItem();
 					final double radius = ( ( Number ) view.ftfRadius.getValue() ).doubleValue();
 					final TrackMateExporter exporter = new TrackMateExporter( filePath, fieldMap, radius, view.chckbxComputeFeatures.isSelected(), imp );
-					exporter.setLogger( str -> info( str ) );
+					exporter.setLogger( view.getLogger() );
 					if ( !exporter.checkInput() || !exporter.process() )
 					{
 						error( "Error importing CSV file:\n" + exporter.getErrorMessage() );
@@ -384,17 +383,11 @@ public class ExporterController
 
 	private void error( final String string )
 	{
-		view.log( string, Color.RED.darker() );
+		view.getLogger().error( string );
 	}
 
 	private void log( final String string )
 	{
-		view.log( string, Color.BLACK );
+		view.getLogger().log( string );
 	}
-
-	private void info( final String string )
-	{
-		view.log( string, Color.GREEN.darker().darker() );
-	}
-
 }

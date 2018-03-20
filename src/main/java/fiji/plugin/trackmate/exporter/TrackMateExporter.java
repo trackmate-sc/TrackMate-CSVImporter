@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -75,7 +74,7 @@ public class TrackMateExporter implements Algorithm
 
 	private final boolean computeAllFeatures;
 
-	private Consumer< String > logger = str -> {};
+	private Logger logger = Logger.VOID_LOGGER;
 
 	public TrackMateExporter( final String filePath, final Map< String, Integer > fieldMap, final double radius, final boolean computeAllFeatures, final ImagePlus imp )
 	{
@@ -175,7 +174,7 @@ public class TrackMateExporter implements Algorithm
 		 * Iterate over records.
 		 */
 
-		logger.accept( String.format( "Parsing records.\n" ) );
+		logger.log( String.format( "Parsing records.\n" ) );
 		long nRecords = 0;
 		for ( final CSVRecord record : records )
 		{
@@ -244,9 +243,9 @@ public class TrackMateExporter implements Algorithm
 				continue;
 			}
 		}
-		logger.accept( String.format( "Parsing done. Iterated over %d records.\n", nRecords ) );
+		logger.log( String.format( "Parsing done. Iterated over %d records.\n", nRecords ) );
 		if ( importTrack )
-			logger.accept( String.format( "Found %d tracks.\n", tracks.size() ) );
+			logger.log( String.format( "Found %d tracks.\n", tracks.size() ) );
 
 		/*
 		 * Generate a Model object.
@@ -254,20 +253,20 @@ public class TrackMateExporter implements Algorithm
 
 		final SpotCollection sc = SpotCollection.fromMap( spots );
 		sc.setVisible( true );
-		logger.accept( String.format( "Found %d spots.\n", sc.getNSpots( true ) ) );
+		logger.log( String.format( "Found %d spots.\n", sc.getNSpots( true ) ) );
 
 		final NavigableSet< Integer > frames = sc.keySet();
 		for ( final Integer frame : frames )
-			logger.accept( String.format( "- frame %4d, n spots = %d\n", frame, sc.getNSpots( frame, true ) ) );
+			logger.log( String.format( "- frame %4d, n spots = %d\n", frame, sc.getNSpots( frame, true ) ) );
 
 		final Model model = new Model();
 		model.setPhysicalUnits( "um", imp.getCalibration().getTimeUnit() );
-		model.setLogger( Logger.IJ_LOGGER );
+		model.setLogger( logger == null ? Logger.IJ_LOGGER : logger );
 		model.setSpots( sc, false );
 
 		if ( importTrack )
 		{
-			logger.accept( "Importing tracks." );
+			logger.log( "Importing tracks." );
 			final Set< Integer > trackIDs = tracks.keySet();
 			for ( final Integer trackID : trackIDs )
 			{
@@ -283,7 +282,7 @@ public class TrackMateExporter implements Algorithm
 					source = target;
 				}
 			}
-			logger.accept( " Done.\n" );
+			logger.log( " Done.\n" );
 
 		}
 
@@ -350,20 +349,20 @@ public class TrackMateExporter implements Algorithm
 			settings.addTrackAnalyzer( new TrackSpotQualityFeatureAnalyzer() );
 		}
 
-		logger.accept( "Added the following features to be computed:\n" + settings.toStringFeatureAnalyzersInfo() );
+		logger.log( "Added the following features to be computed:\n" + settings.toStringFeatureAnalyzersInfo() );
 		
 		/*
 		 * Generate a TrackMate object and create TrackMate GUI from it.
 		 */
 
-		logger.accept( "Computing features.\n" );
+		logger.log( "Computing features.\n" );
 		final TrackMate trackmate = new TrackMate( model, settings );
 		trackmate.computeSpotFeatures( false );
 		trackmate.computeEdgeFeatures( false );
 		trackmate.computeTrackFeatures( false );
-		logger.accept( "Done.\n" );
+		logger.log( "Done.\n" );
 
-		logger.accept( "Launching GUI.\n" );
+		logger.log( "Launching GUI.\n" );
 		final TrackMateGUIController controller = new TrackMateGUIController( trackmate );
 		GuiUtils.positionWindow( controller.getGUI(), settings.imp.getWindow() );
 		final String guiState = importTrack ? ConfigureViewsDescriptor.KEY : "ChooseTracker";
@@ -374,7 +373,7 @@ public class TrackMateExporter implements Algorithm
 		for ( final String key : displaySettings.keySet() )
 			view.setDisplaySettings( key, displaySettings.get( key ) );
 		view.render();
-		logger.accept( "Export complete.\n" );
+		logger.log( "Export complete.\n" );
 
 		return true;
 	}
@@ -385,7 +384,7 @@ public class TrackMateExporter implements Algorithm
 		return errorMessage;
 	}
 
-	public void setLogger( final Consumer< String > logger )
+	public void setLogger( final Logger logger )
 	{
 		this.logger = logger;
 	}
