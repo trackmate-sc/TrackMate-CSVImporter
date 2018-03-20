@@ -55,7 +55,7 @@ import net.imglib2.algorithm.Algorithm;
 public class TrackMateExporter implements Algorithm
 {
 
-	public static final String PLUGIN_VERSION = "0.0.5-SNAPSHOT";
+	public static final String PLUGIN_VERSION = "0.1.0-SNAPSHOT";
 
 	private final String filePath;
 
