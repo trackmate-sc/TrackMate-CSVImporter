@@ -1,8 +1,17 @@
 package fiji.plugin.trackmate.exporter;
 
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_FRAME_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_ID_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_NAME_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_QUALITY_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_RADIUS_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_TRACK_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_X_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Y_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Z_COLUMN_NAME;
 
 import java.util.Map;
+import java.util.Optional;
 
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
@@ -24,8 +33,6 @@ import net.imglib2.algorithm.Algorithm;
 public class TrackMateToGUIExporter implements Algorithm
 {
 
-	public static final String PLUGIN_VERSION = "0.1.0-SNAPSHOT";
-
 	private final String filePath;
 
 	private final ImagePlus imp;
@@ -36,20 +43,18 @@ public class TrackMateToGUIExporter implements Algorithm
 
 	private final boolean computeAllFeatures;
 
-	private Logger logger = Logger.VOID_LOGGER;
+	private final Logger logger;
 
 	private final double radius;
 
-	private final TrackMateExporter exporter;
-
-	public TrackMateToGUIExporter( final String filePath, final Map< String, Integer > fieldMap, final double radius, final boolean computeAllFeatures, final ImagePlus imp )
+	public TrackMateToGUIExporter( final String filePath, final Map< String, Integer > fieldMap, final double radius, final boolean computeAllFeatures, final ImagePlus imp, final Logger logger )
 	{
 		this.filePath = filePath;
 		this.fieldMap = fieldMap;
 		this.radius = radius;
 		this.computeAllFeatures = computeAllFeatures;
 		this.imp = imp;
-		this.exporter = new TrackMateExporter();
+		this.logger = logger;
 	}
 
 	@Override
@@ -61,24 +66,52 @@ public class TrackMateToGUIExporter implements Algorithm
 	@Override
 	public boolean process()
 	{
+		final Integer noCol = Integer.valueOf( -1 );
+		final int xCol = Optional.ofNullable( fieldMap.get( KEY_X_COLUMN_NAME ) ).orElse( noCol ).intValue();
+		final int yCol = Optional.ofNullable( fieldMap.get( KEY_Y_COLUMN_NAME ) ).orElse( noCol ).intValue();
+		final int zCol = Optional.ofNullable( fieldMap.get( KEY_Z_COLUMN_NAME ) ).orElse( noCol ).intValue();
+		final int radiusCol = Optional.ofNullable( fieldMap.get( KEY_RADIUS_COLUMN_NAME ) ).orElse( noCol ).intValue();
+		final int frameCol = Optional.ofNullable( fieldMap.get( KEY_FRAME_COLUMN_NAME ) ).orElse( noCol ).intValue();
+		final int qualityCol = Optional.ofNullable( fieldMap.get( KEY_QUALITY_COLUMN_NAME ) ).orElse( noCol ).intValue();
+		final int idCol = Optional.ofNullable( fieldMap.get( KEY_ID_COLUMN_NAME ) ).orElse( noCol ).intValue();
+		final int nameCol = Optional.ofNullable( fieldMap.get( KEY_NAME_COLUMN_NAME ) ).orElse( noCol ).intValue();
+		final int trackCol = Optional.ofNullable( fieldMap.get( KEY_TRACK_COLUMN_NAME ) ).orElse( noCol ).intValue();
+
+		final TrackMateExporter exporter = TrackMateExporter.builder()
+				.csvFilePath( filePath )
+				.imp( imp )
+				.declareAllFeatures( computeAllFeatures )
+				.xCol( xCol )
+				.yCol( yCol )
+				.zCol( zCol )
+				.frameCol( frameCol )
+				.idCol( idCol )
+				.qualityCol( qualityCol )
+				.nameCol( nameCol )
+				.trackCol( trackCol )
+				.radiusCol( radiusCol )
+				.radius( radius )
+				.logger( logger )
+				.create();
+
 		final String spaceUnit = imp.getCalibration().getUnit();
 		final String timeUnit = imp.getCalibration().getTimeUnit();
 		final double frameInterval = imp.getCalibration().frameInterval;
 
-		final Model model = exporter.importModel( filePath, fieldMap, radius, spaceUnit, timeUnit, frameInterval );
+		final Model model = exporter.getModel( frameInterval, spaceUnit, timeUnit );
 		if ( null == model )
 		{
 			this.errorMessage = exporter.getErrorMessage();
 			return false;
 		}
 
-		final Settings settings = exporter.createSettingsFromImp( imp, computeAllFeatures );
+		final Settings settings = exporter.getSettings();
 		if ( null == settings )
 		{
 			this.errorMessage = exporter.getErrorMessage();
 			return false;
 		}
-		
+
 		/*
 		 * Generate a TrackMate object and create TrackMate GUI from it.
 		 */
@@ -111,11 +144,5 @@ public class TrackMateToGUIExporter implements Algorithm
 	public String getErrorMessage()
 	{
 		return errorMessage;
-	}
-
-	public void setLogger( final Logger logger )
-	{
-		this.logger = logger;
-		exporter.setLogger( logger );
 	}
 }

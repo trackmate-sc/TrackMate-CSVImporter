@@ -91,8 +91,7 @@ public class ExporterController
 
 					final ImagePlus imp = ( ImagePlus ) view.comboBoxImp.getSelectedItem();
 					final double radius = ( ( Number ) view.ftfRadius.getValue() ).doubleValue();
-					final TrackMateToGUIExporter exporter = new TrackMateToGUIExporter( filePath, fieldMap, radius, view.chckbxComputeFeatures.isSelected(), imp );
-					exporter.setLogger( view.getLogger() );
+					final TrackMateToGUIExporter exporter = new TrackMateToGUIExporter( filePath, fieldMap, radius, view.chckbxComputeFeatures.isSelected(), imp, view.getLogger() );
 					if ( !exporter.checkInput() || !exporter.process() )
 					{
 						error( "Error importing CSV file:\n" + exporter.getErrorMessage() );
