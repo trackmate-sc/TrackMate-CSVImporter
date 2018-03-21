@@ -10,6 +10,7 @@ import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_X_C
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Y_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Z_COLUMN_NAME;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -21,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.commons.csv.CSVFormat;
@@ -51,6 +53,15 @@ import fiji.plugin.trackmate.providers.SpotAnalyzerProvider;
 import fiji.plugin.trackmate.providers.TrackAnalyzerProvider;
 import fiji.plugin.trackmate.tracking.ManualTrackerFactory;
 import ij.ImagePlus;
+import loci.common.DebugTools;
+import loci.formats.FormatException;
+import loci.formats.meta.IMetadata;
+import loci.plugins.in.ImportProcess;
+import loci.plugins.in.ImporterOptions;
+import ome.units.UNITS;
+import ome.units.quantity.Length;
+import ome.units.quantity.Time;
+import ome.xml.model.primitives.PositiveInteger;
 
 public class TrackMateExporter
 {
@@ -271,6 +282,66 @@ public class TrackMateExporter
 		}
 
 		return model;
+	}
+
+	public Settings createSettingsFromImageFile( final String imageFile, final boolean computeAllFeatures )
+	{
+		return createSettingsFromImageFile( imageFile, computeAllFeatures, 0 );
+	}
+
+	public Settings createSettingsFromImageFile( final String imageFile, final boolean computeAllFeatures, final int series )
+	{
+		final Settings settings = new Settings();
+		try
+		{
+			DebugTools.setRootLevel( "ERROR" );
+			final ImporterOptions options = new ImporterOptions();
+			options.setId( imageFile );
+			options.setQuiet( true );
+			options.setWindowless( true );
+			final ImportProcess process = new ImportProcess( options );
+			if ( !process.execute() )
+			{
+				errorMessage = "Error while preparing the import of metadata.";
+				return null;
+			}
+
+			final IMetadata metadata = process.getOMEMetadata();
+			final Length pixelsPhysicalSizeX = metadata.getPixelsPhysicalSizeX( series );
+			final Length pixelsPhysicalSizeY = metadata.getPixelsPhysicalSizeY( series );
+			final Length pixelsPhysicalSizeZ = metadata.getPixelsPhysicalSizeZ( series );
+			final Time timeIncrement = metadata.getPixelsTimeIncrement( series );
+			final PositiveInteger sizeX = metadata.getPixelsSizeX( series );
+			final PositiveInteger sizeY = metadata.getPixelsSizeY( series );
+			final PositiveInteger sizeZ = metadata.getPixelsSizeZ( series );
+			final PositiveInteger sizeT = metadata.getPixelsSizeT( series );
+
+			settings.width = sizeX.getValue().intValue();
+			settings.height = sizeY.getValue().intValue();
+			settings.nslices = sizeZ.getValue().intValue();
+			settings.nframes = sizeT.getValue().intValue();
+			settings.dx = pixelsPhysicalSizeX.value().doubleValue();
+			settings.dy = pixelsPhysicalSizeY.value().doubleValue();
+			settings.dz = Optional.ofNullable( pixelsPhysicalSizeZ )
+					.orElse( new Length( Double.valueOf( 1. ), UNITS.PIXEL ) ).value().doubleValue();
+			settings.dt = timeIncrement.value().doubleValue();
+			settings.xstart = 0;
+			settings.xend = settings.width - 1;
+			settings.ystart = 0;
+			settings.yend = settings.height - 1;
+			settings.zstart = 0;
+			settings.zend = settings.nslices - 1;
+			final File file = new File( imageFile );
+			settings.imageFileName = file.getName();
+			settings.imageFolder = file.getParent();
+
+		}
+		catch ( final IOException | FormatException e1 )
+		{
+			errorMessage = "Problem reading metadata:\n" + e1.getMessage();
+			return null;
+		}
+		return settings;
 	}
 
 	public Settings createSettingsFromImp( final ImagePlus imp, final boolean computeAllFeatures )
