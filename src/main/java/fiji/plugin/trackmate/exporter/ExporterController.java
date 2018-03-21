@@ -91,7 +91,7 @@ public class ExporterController
 
 					final ImagePlus imp = ( ImagePlus ) view.comboBoxImp.getSelectedItem();
 					final double radius = ( ( Number ) view.ftfRadius.getValue() ).doubleValue();
-					final TrackMateExporter exporter = new TrackMateExporter( filePath, fieldMap, radius, view.chckbxComputeFeatures.isSelected(), imp );
+					final TrackMateToGUIExporter exporter = new TrackMateToGUIExporter( filePath, fieldMap, radius, view.chckbxComputeFeatures.isSelected(), imp );
 					exporter.setLogger( view.getLogger() );
 					if ( !exporter.checkInput() || !exporter.process() )
 					{

@@ -32,7 +32,6 @@ import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.Spot;
 import fiji.plugin.trackmate.SpotCollection;
-import fiji.plugin.trackmate.TrackMate;
 import fiji.plugin.trackmate.detection.ManualDetectorFactory;
 import fiji.plugin.trackmate.features.edges.EdgeAnalyzer;
 import fiji.plugin.trackmate.features.edges.EdgeTargetAnalyzer;
@@ -47,53 +46,30 @@ import fiji.plugin.trackmate.features.track.TrackIndexAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackLocationAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackSpeedStatisticsAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackSpotQualityFeatureAnalyzer;
-import fiji.plugin.trackmate.gui.GuiUtils;
-import fiji.plugin.trackmate.gui.TrackMateGUIController;
-import fiji.plugin.trackmate.gui.descriptors.ConfigureViewsDescriptor;
 import fiji.plugin.trackmate.providers.EdgeAnalyzerProvider;
 import fiji.plugin.trackmate.providers.SpotAnalyzerProvider;
 import fiji.plugin.trackmate.providers.TrackAnalyzerProvider;
 import fiji.plugin.trackmate.tracking.ManualTrackerFactory;
-import fiji.plugin.trackmate.visualization.hyperstack.HyperStackDisplayer;
 import ij.ImagePlus;
-import net.imglib2.algorithm.Algorithm;
 
-public class TrackMateExporter implements Algorithm
+public class TrackMateExporter
 {
-
-	public static final String PLUGIN_VERSION = "0.1.0-SNAPSHOT";
-
-	private final String filePath;
-
-	private final ImagePlus imp;
-
-	private final Map< String, Integer > fieldMap;
 
 	private String errorMessage;
 
-	private final boolean computeAllFeatures;
+	private Logger logger;
 
-	private Logger logger = Logger.VOID_LOGGER;
-
-	private final double radius;
-
-	public TrackMateExporter( final String filePath, final Map< String, Integer > fieldMap, final double radius, final boolean computeAllFeatures, final ImagePlus imp )
+	public TrackMateExporter()
 	{
-		this.filePath = filePath;
-		this.fieldMap = fieldMap;
-		this.radius = radius;
-		this.computeAllFeatures = computeAllFeatures;
-		this.imp = imp;
+		this( Logger.VOID_LOGGER );
 	}
 
-	@Override
-	public boolean checkInput()
+	public TrackMateExporter( final Logger logger )
 	{
-		return true;
+		this.logger = logger;
 	}
 
-	@Override
-	public boolean process()
+	public Model importModel( final String filePath, final Map< String, Integer > fieldMap, final double radius, final String spaceUnits, final String timeUnits, final double frameInterval )
 	{
 		@SuppressWarnings( "unused" )
 		CSVMetadata csvMetadata = null;
@@ -105,7 +81,7 @@ public class TrackMateExporter implements Algorithm
 		{
 			errorMessage = e.getMessage();
 			e.printStackTrace();
-			return false;
+			return null;
 		}
 
 		/*
@@ -157,7 +133,7 @@ public class TrackMateExporter implements Algorithm
 		{
 			e.printStackTrace();
 			errorMessage = e.getMessage();
-			return false;
+			return null;
 		}
 
 		try
@@ -171,7 +147,7 @@ public class TrackMateExporter implements Algorithm
 		{
 			e.printStackTrace();
 			errorMessage = e.getMessage();
-			return false;
+			return null;
 		}
 
 		/*
@@ -221,7 +197,7 @@ public class TrackMateExporter implements Algorithm
 					spot = new Spot( x, y, z, r, q, name );
 				}
 				spot.putFeature( Spot.FRAME, ( double ) t );
-				spot.putFeature( Spot.POSITION_T, imp.getCalibration().frameInterval * t );
+				spot.putFeature( Spot.POSITION_T, frameInterval * t );
 
 				if ( importTrack )
 				{
@@ -268,8 +244,8 @@ public class TrackMateExporter implements Algorithm
 			logger.log( String.format( "- frame %4d, n spots = %d\n", frame, sc.getNSpots( frame, true ) ) );
 
 		final Model model = new Model();
-		model.setPhysicalUnits( "um", imp.getCalibration().getTimeUnit() );
-		model.setLogger( logger == null ? Logger.IJ_LOGGER : logger );
+		model.setPhysicalUnits( spaceUnits, timeUnits );
+		model.setLogger( logger );
 		model.setSpots( sc, false );
 
 		if ( importTrack )
@@ -294,6 +270,14 @@ public class TrackMateExporter implements Algorithm
 
 		}
 
+		return model;
+	}
+
+	public Settings createSettingsFromImp( final ImagePlus imp, final boolean computeAllFeatures )
+	{
+
+		logger.log( "Creating settings from opened ImagePlus.\n" );
+
 		/*
 		 * Generate a settings object.
 		 */
@@ -302,11 +286,8 @@ public class TrackMateExporter implements Algorithm
 		settings.setFrom( imp );
 		settings.detectorFactory = new ManualDetectorFactory<>();
 		settings.detectorSettings = settings.detectorFactory.getDefaultSettings();
-		if ( importTrack )
-		{
-			settings.trackerFactory = new ManualTrackerFactory();
-			settings.trackerSettings = settings.trackerFactory.getDefaultSettings();
-		}
+		settings.trackerFactory = new ManualTrackerFactory();
+		settings.trackerSettings = settings.trackerFactory.getDefaultSettings();
 
 		if ( computeAllFeatures )
 		{
@@ -340,6 +321,10 @@ public class TrackMateExporter implements Algorithm
 		}
 		else
 		{
+			/*
+			 * Minimal set of features.
+			 */
+
 			// Spot features.
 			settings.addSpotAnalyzerFactory( new ManualSpotColorAnalyzerFactory<>() );
 
@@ -358,35 +343,9 @@ public class TrackMateExporter implements Algorithm
 		}
 
 		logger.log( "Added the following features to be computed:\n" + settings.toStringFeatureAnalyzersInfo() );
-		
-		/*
-		 * Generate a TrackMate object and create TrackMate GUI from it.
-		 */
-
-		logger.log( "Computing features.\n" );
-		final TrackMate trackmate = new TrackMate( model, settings );
-		trackmate.computeSpotFeatures( false );
-		trackmate.computeEdgeFeatures( false );
-		trackmate.computeTrackFeatures( false );
-		logger.log( "Done.\n" );
-
-		logger.log( "Launching GUI.\n" );
-		final TrackMateGUIController controller = new TrackMateGUIController( trackmate );
-		GuiUtils.positionWindow( controller.getGUI(), settings.imp.getWindow() );
-		final String guiState = importTrack ? ConfigureViewsDescriptor.KEY : "SpotFilter";
-		controller.setGUIStateString( guiState );
-		final HyperStackDisplayer view = new HyperStackDisplayer( model, controller.getSelectionModel(), settings.imp );
-		controller.getGuimodel().addView( view );
-		final Map< String, Object > displaySettings = controller.getGuimodel().getDisplaySettings();
-		for ( final String key : displaySettings.keySet() )
-			view.setDisplaySettings( key, displaySettings.get( key ) );
-		view.render();
-		logger.log( "Export complete.\n" );
-
-		return true;
+		return settings;
 	}
 
-	@Override
 	public String getErrorMessage()
 	{
 		return errorMessage;

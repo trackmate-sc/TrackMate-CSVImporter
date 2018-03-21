@@ -362,7 +362,7 @@ public class ExporterPanel extends JPanel
 		add( panelTitle, BorderLayout.NORTH );
 		panelTitle.setLayout( new BorderLayout( 0, 0 ) );
 
-		final JLabel lblTrackmateCsvImporter = new JLabel( "TrackMate CSV importer v" + TrackMateExporter.PLUGIN_VERSION, ICON, JLabel.CENTER );
+		final JLabel lblTrackmateCsvImporter = new JLabel( "TrackMate CSV importer v" + TrackMateToGUIExporter.PLUGIN_VERSION, ICON, JLabel.CENTER );
 		lblTrackmateCsvImporter.setFont( bigFont );
 		lblTrackmateCsvImporter.setPreferredSize( new Dimension( 100, 50 ) );
 		lblTrackmateCsvImporter.setHorizontalAlignment( SwingConstants.CENTER );
