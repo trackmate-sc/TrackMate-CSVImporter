@@ -1,7 +1,5 @@
 package fiji.plugin.trackmate.detection;
 
-import static fiji.plugin.trackmate.detection.DetectorKeys.DEFAULT_RADIUS;
-import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_RADIUS;
 import static fiji.plugin.trackmate.io.IOUtils.readDoubleAttribute;
 import static fiji.plugin.trackmate.io.IOUtils.writeAttribute;
 import static fiji.plugin.trackmate.io.IOUtils.writeRadius;
@@ -36,7 +34,6 @@ import net.imglib2.type.numeric.RealType;
 @Plugin( type = SpotDetectorFactory.class, enabled = false )
 public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T > > implements SpotDetectorFactory< T >
 {
-
 
 	public static final String INFO_TEXT = "<html>"
 			+ "This detector does not operate on the provided image "
@@ -88,6 +85,26 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 	public static final String KEY_Z_COLUMN_NAME = "Z_COLUMN";
 
 	/**
+	 * The key for the radius column name in the CSV file. Expected values are
+	 * {@link String}s which should be the name of a column holding the radius
+	 * of the particles, in physical units. If the value of this parameter is
+	 * <code>null</code>, particles will be created with a fixed radius
+	 * specified by the {@link #KEY_RADIUS} settings.
+	 */
+	public static final String KEY_RADIUS_COLUMN_NAME = "RADIUS_COLUMN";
+
+	/**
+	 * The key for the radius settings. Expected values are strictly positive
+	 * {@link Double}s, that specify the radius of the created spot in physical
+	 * units.
+	 * <p>
+	 * The value of this parameter must not be <code>null</code>. The value of
+	 * this parameter is used only if the parameter for
+	 * {@link #KEY_RADIUS_COLUMN_NAME} is <code>null</code>.
+	 */
+	public static final String KEY_RADIUS = "RADIUS";
+
+	/**
 	 * The key for the frame column name in the CSV file. Expected values are
 	 * {@link String}s which should be the name of a column holding the frame
 	 * number in which particles are, listed as integers.
@@ -99,9 +116,8 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 	/**
 	 * The key for the track column in the CSV file. Expected values are
 	 * {@link String}s which should be the name of a column holding the track
-	 * index of particles, listed as integers.
-	 * This setting is not mandatory. Tracks will not be imported if the value
-	 * is empty or <code>null</code>.
+	 * index of particles, listed as integers. This setting is not mandatory.
+	 * Tracks will not be imported if the value is empty or <code>null</code>.
 	 */
 	public static final String KEY_TRACK_COLUMN_NAME = "TRACK_COLUMN";
 
@@ -198,6 +214,8 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 
 	public static final Double DEFAULT_Z_ORIGIN = Double.valueOf( 0. );
 
+	public static final Double DEFAULT_RADIUS = Double.valueOf( 1. );
+
 	private String errorMessage;
 
 	private Map< Integer, List< Spot > > spots;
@@ -255,7 +273,7 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 		final CSVImporter importer = new CSVImporter( filePath, radius,
 				xColumnName, yColumnName, zColumnName, frameColumnName,
 				qualityColumn, nameColumn, idColumn,
-				xOrigin, yOrigin, zOrigin);
+				xOrigin, yOrigin, zOrigin );
 
 		if ( !importer.checkInput() || !importer.process() )
 		{
@@ -280,17 +298,17 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 		final StringBuilder errorHolder = new StringBuilder();
 		final boolean ok =
 				writeRadius( settings, element, errorHolder )
-				&& writeAttribute( settings, element, KEY_FILE_PATH, String.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_X_COLUMN_NAME, String.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_Y_COLUMN_NAME, String.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_Z_COLUMN_NAME, String.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_FRAME_COLUMN_NAME, String.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_QUALITY_COLUMN_NAME, String.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_NAME_COLUMN_NAME, String.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_ID_COLUMN_NAME, String.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_X_ORIGIN, Double.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_Y_ORIGIN, Double.class, errorHolder )
-				&& writeAttribute( settings, element, KEY_Z_ORIGIN, Double.class, errorHolder );
+						&& writeAttribute( settings, element, KEY_FILE_PATH, String.class, errorHolder )
+						&& writeAttribute( settings, element, KEY_X_COLUMN_NAME, String.class, errorHolder )
+						&& writeAttribute( settings, element, KEY_Y_COLUMN_NAME, String.class, errorHolder )
+						&& writeAttribute( settings, element, KEY_Z_COLUMN_NAME, String.class, errorHolder )
+						&& writeAttribute( settings, element, KEY_FRAME_COLUMN_NAME, String.class, errorHolder )
+						&& writeAttribute( settings, element, KEY_QUALITY_COLUMN_NAME, String.class, errorHolder )
+						&& writeAttribute( settings, element, KEY_NAME_COLUMN_NAME, String.class, errorHolder )
+						&& writeAttribute( settings, element, KEY_ID_COLUMN_NAME, String.class, errorHolder )
+						&& writeAttribute( settings, element, KEY_X_ORIGIN, Double.class, errorHolder )
+						&& writeAttribute( settings, element, KEY_Y_ORIGIN, Double.class, errorHolder )
+						&& writeAttribute( settings, element, KEY_Z_ORIGIN, Double.class, errorHolder );
 
 		if ( !ok )
 			errorMessage = errorHolder.toString();
@@ -347,6 +365,8 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 		map.put( KEY_X_ORIGIN, DEFAULT_X_ORIGIN );
 		map.put( KEY_Y_ORIGIN, DEFAULT_Y_ORIGIN );
 		map.put( KEY_Z_ORIGIN, DEFAULT_Z_ORIGIN );
+		map.put( KEY_RADIUS_COLUMN_NAME, null );
+		map.put( KEY_RADIUS, DEFAULT_RADIUS );
 		return map;
 	}
 
@@ -361,6 +381,7 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 		ok = ok & checkParameter( settings, KEY_Y_COLUMN_NAME, String.class, errorHolder );
 		ok = ok & checkParameter( settings, KEY_Z_COLUMN_NAME, String.class, errorHolder );
 		ok = ok & checkParameter( settings, KEY_FRAME_COLUMN_NAME, String.class, errorHolder );
+		ok = ok & checkParameter( settings, KEY_RADIUS, Double.class, errorHolder );
 		final List< String > mandatoryKeys = new ArrayList< String >();
 		mandatoryKeys.add( KEY_FILE_PATH );
 		mandatoryKeys.add( KEY_RADIUS );
@@ -377,9 +398,8 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 		optionalKeys.add( KEY_QUALITY_COLUMN_NAME );
 		ok = ok & checkMapKeys( settings, mandatoryKeys, optionalKeys, errorHolder );
 		if ( !ok )
-		{
 			errorMessage = errorHolder.toString();
-		}
+
 		return ok;
 	}
 

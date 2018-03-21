@@ -4,6 +4,7 @@ import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_FRA
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_ID_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_NAME_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_QUALITY_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_RADIUS_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_TRACK_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_X_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Y_COLUMN_NAME;
@@ -70,11 +71,11 @@ public class TrackMateExporter implements Algorithm
 
 	private String errorMessage;
 
-	private final double radius;
-
 	private final boolean computeAllFeatures;
 
 	private Logger logger = Logger.VOID_LOGGER;
+
+	private final double radius;
 
 	public TrackMateExporter( final String filePath, final Map< String, Integer > fieldMap, final double radius, final boolean computeAllFeatures, final ImagePlus imp )
 	{
@@ -131,6 +132,9 @@ public class TrackMateExporter implements Algorithm
 
 		final Integer trackcol = fieldMap.get( KEY_TRACK_COLUMN_NAME );
 		final boolean importTrack = trackcol != null;
+
+		final Integer radiuscol = fieldMap.get( KEY_RADIUS_COLUMN_NAME );
+		final boolean importRadius = radiuscol != null;
 
 		/*
 		 * Prepare spot & track collections.
@@ -191,6 +195,10 @@ public class TrackMateExporter implements Algorithm
 				if ( importQuality )
 					q = Double.parseDouble( record.get( qualitycol ) );
 
+				double r = radius;
+				if ( importRadius )
+					r = Double.parseDouble( record.get( radiuscol ) );
+
 				String name = null;
 				if ( importName )
 					name = record.get( namecol );
@@ -205,12 +213,12 @@ public class TrackMateExporter implements Algorithm
 					spot.putFeature( Spot.POSITION_Y, y );
 					spot.putFeature( Spot.POSITION_Z, z );
 					spot.putFeature( Spot.QUALITY, q );
-					spot.putFeature( Spot.RADIUS, radius );
+					spot.putFeature( Spot.RADIUS, r );
 					spot.setName( name );
 				}
 				else
 				{
-					spot = new Spot( x, y, z, radius, q, name );
+					spot = new Spot( x, y, z, r, q, name );
 				}
 				spot.putFeature( Spot.FRAME, ( double ) t );
 				spot.putFeature( Spot.POSITION_T, imp.getCalibration().frameInterval * t );
