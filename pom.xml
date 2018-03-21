@@ -110,6 +110,10 @@
 			<artifactId>commons-csv</artifactId>
 			<version>1.2</version>
 		</dependency>
+		<dependency>
+			<groupId>ome</groupId>
+			<artifactId>bio-formats_plugins</artifactId>
+		</dependency>
 	</dependencies>
 	
 	
