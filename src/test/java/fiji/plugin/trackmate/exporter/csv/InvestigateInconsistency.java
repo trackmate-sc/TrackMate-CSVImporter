@@ -1,4 +1,4 @@
-package fiji.plugin.trackmate.exporter;
+package fiji.plugin.trackmate.exporter.csv;
 
 import java.io.File;
 import java.util.Locale;
@@ -6,6 +6,7 @@ import java.util.Locale;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import fiji.plugin.trackmate.exporter.csv.TrackMateExporterPlugin_;
 import ij.IJ;
 import ij.ImageJ;
 

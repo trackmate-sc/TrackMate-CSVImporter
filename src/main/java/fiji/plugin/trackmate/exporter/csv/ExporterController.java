@@ -1,4 +1,4 @@
-package fiji.plugin.trackmate.exporter;
+package fiji.plugin.trackmate.exporter.csv;
 
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_FRAME_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_ID_COLUMN_NAME;

@@ -1,4 +1,4 @@
-package fiji.plugin.trackmate.exporter;
+package fiji.plugin.trackmate.exporter.csv;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
