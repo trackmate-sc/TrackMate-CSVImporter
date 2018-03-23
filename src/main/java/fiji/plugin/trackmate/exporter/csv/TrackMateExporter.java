@@ -196,6 +196,12 @@ public class TrackMateExporter
 		final Settings settings = ( imp == null )
 				? createSettingsFromImageFile( imageFilePath, errorHolder, logger )
 				: createSettingsFromImp( imp, logger );
+
+		if ( null == settings )
+		{
+			errorMessage = errorHolder.toString();
+			return null;
+		}
 		settings.detectorFactory = new ManualDetectorFactory<>();
 		settings.detectorSettings = settings.detectorFactory.getDefaultSettings();
 		settings.trackerFactory = new ManualTrackerFactory();
