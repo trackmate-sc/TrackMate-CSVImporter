@@ -16,7 +16,7 @@
 
 	<name>plugins/TrackMateCSVImporter_.jar</name>
 	<description>TrackMate detector that imports detections from a CSV file.</description>
-	<url>https://gitlab.pasteur.fr/tinevez/TrackMateCSVImporter</url>
+	<url>https://github.com/tinevez/TrackMateCSVImporter</url>
 	<inceptionYear>2017</inceptionYear>
 	<organization>
 		<name>Fiji</name>
@@ -70,18 +70,18 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git@gitlab.pasteur.fr/tinevez/TrackMateCSVImporter</connection>
-		<developerConnection>scm:git:git@gitlab.pasteur.fr/tinevez/TrackMateCSVImporter</developerConnection>
+		<connection>scm:git:git@github.com/tinevez/TrackMateCSVImporter</connection>
+		<developerConnection>scm:git:git@github.com/tinevez/TrackMateCSVImporter</developerConnection>
 		<tag>HEAD</tag>
-		<url>git@gitlab.pasteur.fr/tinevez/TrackMateCSVImporter</url>
+		<url>git@github.com/tinevez/TrackMateCSVImporter</url>
 	</scm>
 	<issueManagement>
 		<system>gitlab</system>
-		<url>https://gitlab.pasteur.fr/tinevez/TrackMateCSVImporter/issues</url>
+		<url>https://github.com/tinevez/TrackMateCSVImporter/issues</url>
 	</issueManagement>
 	<ciManagement>
 		 <system>gitlab-ci</system>
-		<url>git:git@gitlab.pasteur.fr/tinevez/TrackMateCSVImporter</url>
+		<url>git:git@github.com/tinevez/TrackMateCSVImporter</url>
 	</ciManagement>
 
 	<properties>
@@ -115,7 +115,6 @@
 			<artifactId>bio-formats_plugins</artifactId>
 		</dependency>
 	</dependencies>
-	
 	
 </project>
 
