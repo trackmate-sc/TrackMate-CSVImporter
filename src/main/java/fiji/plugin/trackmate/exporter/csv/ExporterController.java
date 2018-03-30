@@ -253,6 +253,7 @@ public class ExporterController
 
 		// Iterate in column orders.
 		final ArrayList< String > headers = new ArrayList<>( headerMap.keySet() );
+		headers.removeIf( ( e ) -> e.trim().isEmpty() );
 
 		if ( headers.isEmpty() )
 		{
