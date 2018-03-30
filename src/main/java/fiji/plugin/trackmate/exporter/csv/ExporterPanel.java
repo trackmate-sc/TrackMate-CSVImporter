@@ -17,6 +17,7 @@ import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
@@ -27,6 +28,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
@@ -75,6 +78,8 @@ public class ExporterPanel extends JPanel
 	private final JTextPane jTextPaneLog;
 
 	private final ExporterLogger logger;
+
+	private final JProgressBar progressBar;
 
 	public ExporterPanel()
 	{
@@ -343,6 +348,7 @@ public class ExporterPanel extends JPanel
 		jTextPaneLog.setEditable( false );
 		jTextPaneLog.setForeground( Color.BLACK );
 		jTextPaneLog.setFont( smallFont );
+		jTextPaneLog.setAutoscrolls( true );
 
 		final JScrollPane scrollPane = new JScrollPane( jTextPaneLog );
 		scrollPane.setOpaque( false );
@@ -357,6 +363,9 @@ public class ExporterPanel extends JPanel
 
 		btnExport = new JButton( "Export" );
 		panelButtonExport.add( btnExport );
+
+		this.progressBar = new JProgressBar();
+		panelLog.add( progressBar, BorderLayout.NORTH );
 
 		final JPanel panelTitle = new JPanel();
 		add( panelTitle, BorderLayout.NORTH );
@@ -393,7 +402,9 @@ public class ExporterPanel extends JPanel
 
 		@Override
 		public void setProgress( final double val )
-		{}
+		{
+			SwingUtilities.invokeLater( () -> progressBar.setValue( ( int ) ( 100 * val ) ) );
+		}
 
 		@Override
 		public void setStatus( final String status )
@@ -411,12 +422,15 @@ public class ExporterPanel extends JPanel
 			{
 				final StyleContext sc = StyleContext.getDefaultStyleContext();
 				final AttributeSet aset = sc.addAttribute( SimpleAttributeSet.EMPTY, StyleConstants.Foreground, color );
-				final int len = jTextPaneLog.getDocument().getLength();
-				jTextPaneLog.setEditable( true );
-				jTextPaneLog.setCaretPosition( len );
-				jTextPaneLog.setCharacterAttributes( aset, false );
-				jTextPaneLog.replaceSelection( message );
-				jTextPaneLog.setEditable( false );
+				final Document doc = jTextPaneLog.getDocument();
+				try
+				{
+					doc.insertString( doc.getLength(), message, aset );
+				}
+				catch ( final BadLocationException e )
+				{
+					e.printStackTrace();
+				}
 			}
 		} );
 	}
