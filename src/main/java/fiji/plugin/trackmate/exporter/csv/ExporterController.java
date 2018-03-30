@@ -44,6 +44,8 @@ public class ExporterController
 
 	private CSVMetadata csvMetadata;
 
+	private Map< String, Integer > headerMap;
+
 	public ExporterController()
 	{
 		this.view = new ExporterPanel();
@@ -72,22 +74,30 @@ public class ExporterController
 					final String filePath = view.textFieldFile.getText();
 
 					final Map< String, Integer > fieldMap = new HashMap<>();
-					fieldMap.put( KEY_X_COLUMN_NAME, Integer.valueOf( view.comboBoxXCol.getSelectedIndex() ) );
-					fieldMap.put( KEY_Y_COLUMN_NAME, Integer.valueOf( view.comboBoxYCol.getSelectedIndex() ) );
-					fieldMap.put( KEY_Z_COLUMN_NAME, Integer.valueOf( view.comboBoxZCol.getSelectedIndex() ) );
-					fieldMap.put( KEY_FRAME_COLUMN_NAME, Integer.valueOf( view.comboBoxFrameCol.getSelectedIndex() ) );
 
-					if ( view.chckbxImportTracks.isSelected() && view.comboBoxTrackCol.getSelectedItem() != NONE_COLUMN )
-						fieldMap.put( KEY_TRACK_COLUMN_NAME, Integer.valueOf( view.comboBoxTrackCol.getSelectedIndex() ) );
+					fieldMap.put( KEY_X_COLUMN_NAME, headerMap.get( view.comboBoxXCol.getSelectedItem() ) );
+					fieldMap.put( KEY_Y_COLUMN_NAME, headerMap.get( view.comboBoxYCol.getSelectedItem() ) );
+					fieldMap.put( KEY_FRAME_COLUMN_NAME, headerMap.get( view.comboBoxFrameCol.getSelectedItem() ) );
 
-					if ( view.comboBoxQualityCol.getSelectedItem() != NONE_COLUMN )
-						fieldMap.put( KEY_QUALITY_COLUMN_NAME, Integer.valueOf( view.comboBoxQualityCol.getSelectedIndex() ) );
+					final Integer zCol = headerMap.get( view.comboBoxZCol.getSelectedItem() );
+					if ( view.comboBoxZCol.getSelectedItem() != NONE_COLUMN && null != zCol )
+						fieldMap.put( KEY_Z_COLUMN_NAME, zCol );
 
-					if ( view.comboBoxNameCol.getSelectedItem() != NONE_COLUMN )
-						fieldMap.put( KEY_NAME_COLUMN_NAME, Integer.valueOf( view.comboBoxNameCol.getSelectedIndex() ) );
+					final Integer trackCol = headerMap.get( view.comboBoxTrackCol.getSelectedItem() );
+					if ( view.chckbxImportTracks.isSelected() && view.comboBoxTrackCol.getSelectedItem() != NONE_COLUMN && null != trackCol )
+						fieldMap.put( KEY_TRACK_COLUMN_NAME, trackCol );
 
-					if ( view.comboBoxIDCol.getSelectedItem() != NONE_COLUMN )
-						fieldMap.put( KEY_ID_COLUMN_NAME, Integer.valueOf( view.comboBoxIDCol.getSelectedIndex() ) );
+					final Integer qualityCol = headerMap.get( view.comboBoxQualityCol.getSelectedItem() );
+					if ( view.comboBoxQualityCol.getSelectedItem() != NONE_COLUMN && null != qualityCol )
+						fieldMap.put( KEY_QUALITY_COLUMN_NAME, qualityCol );
+
+					final Integer nameCol = headerMap.get( view.comboBoxNameCol.getSelectedItem() );
+					if ( view.comboBoxNameCol.getSelectedItem() != NONE_COLUMN && null != nameCol )
+						fieldMap.put( KEY_NAME_COLUMN_NAME, nameCol );
+
+					final Integer idCol = headerMap.get( view.comboBoxIDCol.getSelectedItem() );
+					if ( view.comboBoxIDCol.getSelectedItem() != NONE_COLUMN && null != idCol )
+						fieldMap.put( KEY_ID_COLUMN_NAME, idCol );
 
 					final ImagePlus imp = ( ImagePlus ) view.comboBoxImp.getSelectedItem();
 					final double radius = ( ( Number ) view.ftfRadius.getValue() ).doubleValue();
@@ -249,7 +259,7 @@ public class ExporterController
 			return false;
 		}
 
-		final Map< String, Integer > headerMap = records.getHeaderMap();
+		this.headerMap = records.getHeaderMap();
 
 		// Iterate in column orders.
 		final ArrayList< String > headers = new ArrayList<>( headerMap.keySet() );
@@ -264,7 +274,6 @@ public class ExporterController
 		final String[] mandatory = headers.toArray( new String[] {} );
 		view.comboBoxXCol.setModel( new DefaultComboBoxModel<>( mandatory ) );
 		view.comboBoxYCol.setModel( new DefaultComboBoxModel<>( mandatory ) );
-		view.comboBoxZCol.setModel( new DefaultComboBoxModel<>( mandatory ) );
 		view.comboBoxFrameCol.setModel( new DefaultComboBoxModel<>( mandatory ) );
 		view.comboBoxTrackCol.setModel( new DefaultComboBoxModel<>( mandatory ) );
 
@@ -288,12 +297,6 @@ public class ExporterController
 			{
 				if ( ycol < 0 || ( current.length() < mandatory[ ycol ].length() ) )
 					ycol = i;
-			}
-
-			if ( current.toLowerCase().startsWith( "z" ) )
-			{
-				if ( zcol < 0 || ( current.length() < mandatory[ zcol ].length() ) )
-					zcol = i;
 			}
 
 			if ( current.toLowerCase().startsWith( "frame" )
@@ -323,13 +326,13 @@ public class ExporterController
 
 		view.comboBoxXCol.setSelectedIndex( xcol );
 		view.comboBoxYCol.setSelectedIndex( ycol );
-		view.comboBoxZCol.setSelectedIndex( zcol );
 		view.comboBoxFrameCol.setSelectedIndex( tcol );
 		view.comboBoxTrackCol.setSelectedIndex( trackcol );
 
 		// Add a NONE for non mandatory columns
 		headers.add( NONE_COLUMN );
 		final String[] nonMandatory = headers.toArray( new String[] {} );
+		view.comboBoxZCol.setModel( new DefaultComboBoxModel<>( nonMandatory ) );
 		view.comboBoxQualityCol.setModel( new DefaultComboBoxModel<>( nonMandatory ) );
 		view.comboBoxNameCol.setModel( new DefaultComboBoxModel<>( nonMandatory ) );
 		view.comboBoxIDCol.setModel( new DefaultComboBoxModel<>( nonMandatory ) );
@@ -341,6 +344,12 @@ public class ExporterController
 		{
 			final String current = nonMandatory[ i ];
 
+			if ( current.toLowerCase().startsWith( "z" ) )
+			{
+				if ( zcol < 0 || ( current.length() < mandatory[ zcol ].length() ) )
+					zcol = i;
+			}
+
 			if ( current.toLowerCase().startsWith( "id" ) )
 				idcol = i;
 
@@ -351,6 +360,7 @@ public class ExporterController
 				qualitycol = i;
 		}
 
+		view.comboBoxZCol.setSelectedIndex( zcol );
 		view.comboBoxIDCol.setSelectedIndex( idcol );
 		view.comboBoxQualityCol.setSelectedIndex( qualitycol );
 		view.comboBoxNameCol.setSelectedIndex( namecol );
