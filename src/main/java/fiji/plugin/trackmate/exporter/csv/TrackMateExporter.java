@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.LineNumberReader;
 import java.io.Reader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -328,6 +329,12 @@ public class TrackMateExporter
 		final boolean importID = idCol >= 0;
 		final boolean importTrack = trackCol >= 0;
 
+		/*
+		 * Get the number of lines to have a crude estimate of how many records
+		 * we have to parse.
+		 */
+
+		final long nLines = countLineNumber( csvFilePath );
 
 		/*
 		 * Iterate over records.
@@ -337,6 +344,7 @@ public class TrackMateExporter
 		long nRecords = 0;
 		for ( final CSVRecord record : records )
 		{
+			logger.setProgress( ( double ) nRecords / nLines );
 			nRecords++;
 			try
 			{
@@ -448,7 +456,27 @@ public class TrackMateExporter
 			logger.log( " Done.\n" );
 
 		}
+		logger.setProgress( 0. );
 		return model;
+	}
+
+	private static final long countLineNumber( final String file )
+	{
+		long nLines = 0;
+		try (final LineNumberReader lineNumberReader = new LineNumberReader( new FileReader( file ) ))
+		{
+			lineNumberReader.skip( Long.MAX_VALUE );
+			nLines = lineNumberReader.getLineNumber();
+		}
+		catch ( final FileNotFoundException e )
+		{
+			System.out.println( "FileNotFoundException Occurred" + e.getMessage() );
+		}
+		catch ( final IOException e )
+		{
+			System.out.println( "IOException Occurred" + e.getMessage() );
+		}
+		return nLines;
 	}
 
 	private static Settings createSettingsFromImageFile( final String imageFile, final StringBuilder errorHolder, final Logger logger )
