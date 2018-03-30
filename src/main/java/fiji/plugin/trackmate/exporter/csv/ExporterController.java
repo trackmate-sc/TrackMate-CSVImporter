@@ -287,13 +287,13 @@ public class ExporterController
 		{
 			final String current = mandatory[ i ];
 
-			if ( current.toLowerCase().startsWith( "x" ) )
+			if ( current.toLowerCase().startsWith( "x" ) || current.toLowerCase().endsWith( "x" ) )
 			{
 				if ( xcol < 0 || ( current.length() < mandatory[ xcol ].length() ) )
 					xcol = i;
 			}
 
-			if ( current.toLowerCase().startsWith( "y" ) )
+			if ( current.toLowerCase().startsWith( "y" ) || current.toLowerCase().endsWith( "y" ) )
 			{
 				if ( ycol < 0 || ( current.length() < mandatory[ ycol ].length() ) )
 					ycol = i;
@@ -307,7 +307,7 @@ public class ExporterController
 					tcol = i;
 			}
 
-			if ( current.toLowerCase().startsWith( "track" ) )
+			if ( current.toLowerCase().startsWith( "track" ) || current.toLowerCase().startsWith( "traj" ) )
 			{
 				if ( trackcol < 0 || current.equals( "track" ) )
 					trackcol = i;
@@ -344,7 +344,7 @@ public class ExporterController
 		{
 			final String current = nonMandatory[ i ];
 
-			if ( current.toLowerCase().startsWith( "z" ) )
+			if ( current.toLowerCase().startsWith( "z" ) || current.toLowerCase().endsWith( "z" ) )
 			{
 				if ( zcol < 0 || ( current.length() < mandatory[ zcol ].length() ) )
 					zcol = i;
