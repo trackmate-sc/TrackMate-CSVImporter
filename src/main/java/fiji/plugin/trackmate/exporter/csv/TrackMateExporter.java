@@ -65,7 +65,7 @@ import ome.xml.model.primitives.PositiveInteger;
 
 public class TrackMateExporter
 {
-	public static final String PLUGIN_VERSION = "1.0.1-SNAPSHOT";
+	public static final String PLUGIN_VERSION = "1.0.1";
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd --- HH:mm:ss" );
 
