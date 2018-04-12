@@ -1,5 +1,7 @@
 package fiji.plugin.trackmate.exporter.csv;
 
+import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_RADIUS;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -28,6 +30,7 @@ import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.Spot;
 import fiji.plugin.trackmate.SpotCollection;
+import fiji.plugin.trackmate.TrackMate;
 import fiji.plugin.trackmate.detection.ManualDetectorFactory;
 import fiji.plugin.trackmate.features.edges.EdgeAnalyzer;
 import fiji.plugin.trackmate.features.edges.EdgeTargetAnalyzer;
@@ -149,6 +152,14 @@ public class TrackMateExporter
 		if ( null == model )
 			return false;
 
+		logger.log( "Computing features.\n" );
+		final TrackMate trackmate = new TrackMate( model, settings );
+		if ( settings.imp != null )
+			trackmate.computeSpotFeatures( true );
+		trackmate.computeEdgeFeatures( true );
+		trackmate.computeTrackFeatures( true );
+		logger.log( "Done.\n" );
+
 		final TmXmlWriter writer = new TmXmlWriter( targetFile, logger );
 
 		final String log = "Exported to TrackMate from CSV file "
@@ -203,8 +214,16 @@ public class TrackMateExporter
 			errorMessage = errorHolder.toString();
 			return null;
 		}
-		settings.detectorFactory = new ManualDetectorFactory<>();
-		settings.detectorSettings = settings.detectorFactory.getDefaultSettings();
+		@SuppressWarnings( "rawtypes" )
+		final ManualDetectorFactory factory = new ManualDetectorFactory();
+		@SuppressWarnings( "unchecked" )
+		final Map< String, Object > ds = factory.getDefaultSettings();
+
+		if ( radiusCol < 0 )
+			ds.put( KEY_RADIUS, Double.valueOf( radius ) );
+
+		settings.detectorFactory = factory;
+		settings.detectorSettings = ds;
 		settings.trackerFactory = new ManualTrackerFactory();
 		settings.trackerSettings = settings.trackerFactory.getDefaultSettings();
 
@@ -530,7 +549,7 @@ public class TrackMateExporter
 			settings.zend = settings.nslices - 1;
 			final File file = new File( imageFile );
 			settings.imageFileName = file.getName();
-			settings.imageFolder = file.getParent();
+			settings.imageFolder = Optional.ofNullable( file.getParent() ).orElse( "" );
 		}
 		catch ( final IOException | FormatException e )
 		{
