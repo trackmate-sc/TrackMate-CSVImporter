@@ -34,6 +34,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 
+import org.scijava.util.VersionUtils;
+
 import fiji.plugin.trackmate.Logger;
 import ij.ImagePlus;
 
@@ -371,7 +373,7 @@ public class ExporterPanel extends JPanel
 		add( panelTitle, BorderLayout.NORTH );
 		panelTitle.setLayout( new BorderLayout( 0, 0 ) );
 
-		final JLabel lblTrackmateCsvImporter = new JLabel( "TrackMate CSV importer v" + TrackMateExporter.PLUGIN_VERSION, ICON, JLabel.CENTER );
+		final JLabel lblTrackmateCsvImporter = new JLabel( "TrackMate CSV importer v" + VersionUtils.getVersion( ExporterPanel.class ), ICON, JLabel.CENTER );
 		lblTrackmateCsvImporter.setFont( bigFont );
 		lblTrackmateCsvImporter.setPreferredSize( new Dimension( 100, 50 ) );
 		lblTrackmateCsvImporter.setHorizontalAlignment( SwingConstants.CENTER );
