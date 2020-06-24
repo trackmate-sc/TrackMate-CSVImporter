@@ -20,6 +20,9 @@ public class CSVMetadata
 	@Override
 	public String toString()
 	{
+		if (metadataTokens.isEmpty())
+			return "No metadata\n";
+
 		final StringBuilder result = new StringBuilder();
 		for ( final String field : metadataTokens.keySet() )
 		{
