@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -290,6 +291,7 @@ public class TrackMateCsvRoiImporter
 		try
 		{
 			final CSVFormat csvFormat = CSVFormat.EXCEL
+					.withDelimiter( ';' )
 					.withCommentMarker( '#' );
 			records = csvFormat.parse( in );
 		}
@@ -316,6 +318,9 @@ public class TrackMateCsvRoiImporter
 		if ( hasHeader )
 			lineIterator.next(); // skip first line.
 
+		// Used to store the string fields of a line.
+		final List<String> fields = new ArrayList< >();
+
 		long nRecords = 0;
 		while ( lineIterator.hasNext() )
 		{
@@ -325,12 +330,6 @@ public class TrackMateCsvRoiImporter
 
 			try
 			{
-				final int nVertices = ( record.size() - 2 ) / 2;
-				if ( nVertices < 3 )
-				{
-					logger.log( " Could not parse line " + record.getRecordNumber() + ". Spot ROI has " + nVertices + " vertices, at least 3 is required.\n" );
-					continue;
-				}
 
 				final Iterator< String > it = record.iterator();
 
@@ -340,14 +339,33 @@ public class TrackMateCsvRoiImporter
 				// Frame.
 				final int t = Integer.parseInt( it.next() );
 
+				// Count vertices: non empty fields.
+				fields.clear();
+				while ( it.hasNext() )
+				{
+					final String field = it.next();
+					if (field.isEmpty())
+						continue;
+					fields.add( field );
+				}
+
+
+				final int nVertices = fields.size() / 2;
+				if ( nVertices < 3 )
+				{
+					logger.log( " Could not parse line " + record.getRecordNumber() + ". Spot ROI has " + nVertices + " vertices, at least 3 is required.\n" );
+					continue;
+				}
+
 				// ROI.
 				final double[] xpoly = new double[ nVertices ];
 				final double[] ypoly = new double[ nVertices ];
 				int index = 0;
-				while ( it.hasNext() )
+				final Iterator< String > fieldIterator = fields.iterator();
+				while ( fieldIterator.hasNext() )
 				{
-					final double x = Double.parseDouble( it.next() );
-					final double y = Double.parseDouble( it.next() );
+					final double x = Double.parseDouble( fieldIterator.next() );
+					final double y = Double.parseDouble( fieldIterator.next() );
 					xpoly[ index ] = x;
 					ypoly[ index ] = y;
 					index++;
