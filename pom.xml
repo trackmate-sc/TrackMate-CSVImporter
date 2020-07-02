@@ -118,6 +118,11 @@
 			<groupId>ome</groupId>
 			<artifactId>bio-formats_plugins</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>net.imglib2</groupId>
+			<artifactId>imglib2-roi</artifactId>
+			<version>0.8.0</version>
+		</dependency>
 	</dependencies>
 	
 </project>
