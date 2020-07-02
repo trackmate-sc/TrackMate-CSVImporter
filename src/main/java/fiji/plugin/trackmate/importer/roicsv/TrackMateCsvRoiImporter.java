@@ -67,17 +67,36 @@ public class TrackMateCsvRoiImporter
 
 	private final boolean declareAllFeatures;
 
+	private final boolean hasHeader;
+
+	/**
+	 *
+	 * @param csvFilePath
+	 *            path to the CSV file.
+	 * @param imp
+	 *            reference to the image.
+	 * @param imageFilePath
+	 *            path to the image file.
+	 * @param declareAllFeatures
+	 *            if <code>true</code> all features discovered will be computed.
+	 * @param hasHeader
+	 *            if <code>true</code> the fist line will be skipped.
+	 * @param logger
+	 *            the logger to write import messages.
+	 */
 	private TrackMateCsvRoiImporter(
 			final String csvFilePath,
 			final ImagePlus imp,
 			final String imageFilePath,
 			final boolean declareAllFeatures,
+			final boolean hasHeader,
 			final Logger logger )
 	{
 		this.csvFilePath = csvFilePath;
 		this.imp = imp;
 		this.imageFilePath = imageFilePath;
 		this.declareAllFeatures = declareAllFeatures;
+		this.hasHeader = hasHeader;
 		this.logger = logger;
 	}
 
@@ -293,11 +312,17 @@ public class TrackMateCsvRoiImporter
 		 */
 
 		logger.log( String.format( "Parsing records.\n" ) );
+		final Iterator< CSVRecord > lineIterator = records.iterator();
+		if ( hasHeader )
+			lineIterator.next(); // skip first line.
+
 		long nRecords = 0;
-		for ( final CSVRecord record : records )
+		while ( lineIterator.hasNext() )
 		{
+			final CSVRecord record = lineIterator.next();
 			logger.setProgress( ( double ) nRecords / nLines );
 			nRecords++;
+
 			try
 			{
 				final int nVertices = ( record.size() - 2 ) / 2;
@@ -400,6 +425,8 @@ public class TrackMateCsvRoiImporter
 			private Logger logger = Logger.DEFAULT_LOGGER;
 
 			private boolean declareAllFeatures = true;
+
+			private boolean hasHeader = true;
 		}
 
 		private final Values values;
@@ -433,6 +460,12 @@ public class TrackMateCsvRoiImporter
 			return this;
 		}
 
+		public Builder hasHeader( final boolean hasHeader )
+		{
+			values.hasHeader = hasHeader;
+			return this;
+		}
+
 		public Builder logger( final Logger logger )
 		{
 			values.logger = logger;
@@ -446,6 +479,7 @@ public class TrackMateCsvRoiImporter
 					values.imp,
 					values.imageFilePath,
 					values.declareAllFeatures,
+					values.hasHeader,
 					values.logger );
 		}
 	}
