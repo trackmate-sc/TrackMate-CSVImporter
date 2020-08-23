@@ -62,6 +62,69 @@ public class ExporterController
 		frame.setVisible( true );
 	}
 
+	public void setXColumn( final String xColumnName )
+	{
+		view.comboBoxXCol.setSelectedItem( xColumnName );
+	}
+
+	public void setYColumn( final String yColumnName )
+	{
+		view.comboBoxYCol.setSelectedItem(  yColumnName );
+	}
+
+	public void setZColumn( final String zColumnName )
+	{
+		view.comboBoxZCol.setSelectedItem( ( zColumnName == null ) ? NONE_COLUMN : zColumnName );
+	}
+
+	public void setTrackColumn( final String trackColumnName )
+	{
+		view.comboBoxTrackCol.setSelectedItem(  trackColumnName );
+	}
+
+	public void setIDColumn( final String idColumnName )
+	{
+		view.comboBoxIDCol.setSelectedItem( ( idColumnName == null ) ? NONE_COLUMN : idColumnName );
+	}
+
+	public void setNameColumn( final String nameColumnName )
+	{
+		view.comboBoxNameCol.setSelectedItem( ( nameColumnName == null ) ? NONE_COLUMN : nameColumnName );
+	}
+
+	public void setQualityColumn( final String qualityColumnName )
+	{
+		view.comboBoxQualityCol.setSelectedItem( ( qualityColumnName == null ) ? NONE_COLUMN : qualityColumnName );
+	}
+
+	public void setFrameColumn( final String frameColumnName )
+	{
+		view.comboBoxFrameCol.setSelectedItem( frameColumnName );
+	}
+
+	public void setImage( final ImagePlus imp)
+	{
+		view.comboBoxImp.setSelectedItem( imp );
+		checkImage();
+	}
+
+	public void setRadius( final double radius )
+	{
+		view.ftfRadius.setValue( Double.valueOf( radius ) );
+	}
+
+	public void setImportTracks( final boolean doImportTracks )
+	{
+		final boolean selected = view.chckbxImportTracks.isSelected();
+		if ( selected != doImportTracks)
+			view.chckbxImportTracks.doClick();
+	}
+
+	public void setComputeFeatures( final boolean doComputeFeatures)
+	{
+		view.chckbxComputeFeatures.setSelected( doComputeFeatures );
+	}
+
 	private void export()
 	{
 		view.btnExport.setEnabled( false );
