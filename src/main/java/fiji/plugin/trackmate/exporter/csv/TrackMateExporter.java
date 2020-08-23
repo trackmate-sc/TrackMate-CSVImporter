@@ -22,6 +22,7 @@ import java.util.Set;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+import org.scijava.util.VersionUtils;
 
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
@@ -62,7 +63,6 @@ import ome.xml.model.primitives.PositiveInteger;
 
 public class TrackMateExporter
 {
-	public static final String PLUGIN_VERSION = "1.0.1-SNAPSHOT";
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd --- HH:mm:ss" );
 
@@ -154,7 +154,7 @@ public class TrackMateExporter
 		final String log = "Exported to TrackMate from CSV file "
 				+ csvFilePath + '\n'
 				+ "On the " + DATE_FORMAT.format( new Date() ) + '\n'
-				+ "By TrackMate CSV Exporter v " + PLUGIN_VERSION + '\n';
+				+ "By TrackMate CSV Exporter v " + VersionUtils.getVersion( TrackMateExporter.class ) + '\n';
 		writer.appendLog( log );
 		writer.appendModel( model );
 		writer.appendSettings( settings );
