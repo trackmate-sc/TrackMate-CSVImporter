@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.DefaultComboBoxModel;
@@ -174,14 +175,17 @@ public class ExporterController
 		dialog.setFile( file.getName() );
 		dialog.setVisible( true );
 		String selectedFile = dialog.getFile();
-		if ( null == selectedFile ) { return null; }
+		if ( null == selectedFile )
+			return null;
+
 		if ( !selectedFile.endsWith( ".csv" ) )
 			selectedFile += ".csv";
+
 		file = new File( dialog.getDirectory(), selectedFile );
 		return file;
 	}
 
-	void setCSVFile( final File file )
+	public void setCSVFile( final File file )
 	{
 		csvOk = false;
 		this.file = file;
@@ -259,10 +263,17 @@ public class ExporterController
 			return false;
 		}
 
-		this.headerMap = records.getHeaderMap();
+		final Map< String, Integer > uncleanHeaderMap = records.getHeaderMap();
+		this.headerMap = new HashMap<>( uncleanHeaderMap.size() );
+		for ( final String uncleanKey : uncleanHeaderMap.keySet() )
+		{
+			// Remove control and invisible chars.
+			final String cleanKey = uncleanKey.trim().replaceAll( "\\p{C}", "" );
+			headerMap.put( cleanKey, uncleanHeaderMap.get( uncleanKey ) );
+		}
 
 		// Iterate in column orders.
-		final ArrayList< String > headers = new ArrayList<>( headerMap.keySet() );
+		final List< String > headers = new ArrayList<>( headerMap.keySet() );
 		headers.removeIf( ( e ) -> e.trim().isEmpty() );
 
 		if ( headers.isEmpty() )
@@ -312,7 +323,9 @@ public class ExporterController
 				if ( trackcol < 0 || current.equals( "track" ) )
 					trackcol = i;
 			}
+
 		}
+
 		if ( tcol < 0 )
 			tcol = 0 % ( mandatory.length - 1 );
 		if ( xcol < 0 )
