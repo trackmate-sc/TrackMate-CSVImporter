@@ -10,8 +10,13 @@ import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_X_C
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Y_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Z_COLUMN_NAME;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
+
+import org.scijava.util.VersionUtils;
 
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
@@ -27,11 +32,13 @@ import net.imglib2.algorithm.Algorithm;
 /**
  * Exports a CSV file to a TrackMate instance and shows it in the TrackMate GUI
  * wizard.
- * 
+ *
  * @author Jean-Yves Tinevez
  */
 public class TrackMateToGUIExporter implements Algorithm
 {
+
+	private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd --- HH:mm:ss" );
 
 	private final String filePath;
 
@@ -94,6 +101,12 @@ public class TrackMateToGUIExporter implements Algorithm
 				.logger( logger )
 				.create();
 
+		final String log = "Exporting to TrackMate from CSV file "
+				+ filePath + '\n'
+				+ "On the " + DATE_FORMAT.format( new Date() ) + '\n'
+				+ "By TrackMate CSV Exporter v " + VersionUtils.getVersion( TrackMateToGUIExporter.class ) + '\n';
+		logger.log( log + '\n' );
+
 		final String spaceUnit = imp.getCalibration().getUnit();
 		final String timeUnit = imp.getCalibration().getTimeUnit();
 		final double frameInterval = imp.getCalibration().frameInterval;
@@ -135,6 +148,7 @@ public class TrackMateToGUIExporter implements Algorithm
 		for ( final String key : displaySettings.keySet() )
 			view.setDisplaySettings( key, displaySettings.get( key ) );
 		view.render();
+		controller.getGUI().getLogger().log( log );
 		logger.log( "Export complete.\n" );
 
 		return true;
