@@ -59,6 +59,7 @@ public class ExporterController
 		frame.setIconImage( ExporterPanel.ICON.getImage() );
 		frame.getContentPane().add( view );
 		frame.pack();
+		frame.setLocationRelativeTo( null );
 		frame.setVisible( true );
 	}
 
