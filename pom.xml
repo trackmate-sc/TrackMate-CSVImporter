@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>TrackMate-CSVImporter</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>2.0.0</version>
 
 	<name>TrackMate CSV Importer</name>
 	<description>Import detections and tracks from a CSV file into TrackMate.</description>
@@ -69,7 +69,7 @@
 	<scm>
 		<connection>scm:git:git@github.com/tinevez/TrackMateCSVImporter</connection>
 		<developerConnection>scm:git:git@github.com/tinevez/TrackMateCSVImporter</developerConnection>
-		<tag>HEAD</tag>
+		<tag>TrackMate-CSVImporter-2.0.0</tag>
 		<url>git@github.com/tinevez/TrackMate-CSVImporter</url>
 	</scm>
 	<issueManagement>
