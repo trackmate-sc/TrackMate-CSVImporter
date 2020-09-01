@@ -516,12 +516,16 @@ public class TrackMateImporter
 			settings.height = sizeY.getValue().intValue();
 			settings.nslices = sizeZ.getValue().intValue();
 			settings.nframes = sizeT.getValue().intValue();
-			settings.dx = pixelsPhysicalSizeX.value().doubleValue();
-			settings.dy = pixelsPhysicalSizeY.value().doubleValue();
+			settings.dx = Optional.ofNullable( pixelsPhysicalSizeX )
+					.orElse( new Length( Double.valueOf( 1. ), UNITS.PIXEL ) )
+					.value().doubleValue();
+			settings.dy = Optional.ofNullable( pixelsPhysicalSizeY )
+					.orElse( new Length( Double.valueOf( 1. ), UNITS.PIXEL ) )
+					.value().doubleValue();
 			settings.dz = Optional.ofNullable( pixelsPhysicalSizeZ )
 					.orElse( new Length( Double.valueOf( 1. ), UNITS.PIXEL ) )
 					.value().doubleValue();
-			settings.dt = timeIncrement.value().doubleValue();
+			settings.dt = ( null == timeIncrement) ? 1. : timeIncrement.value().doubleValue();
 			settings.xstart = 0;
 			settings.xend = settings.width - 1;
 			settings.ystart = 0;
@@ -562,8 +566,10 @@ public class TrackMateImporter
 			}
 
 			final IMetadata metadata = process.getOMEMetadata();
-			final String spaceUnit = metadata.getPixelsPhysicalSizeX( series ).unit().getSymbol();
-			final String timeUnit = metadata.getPixelsTimeIncrement( series ).unit().getSymbol();
+			final Length pixelsPhysicalSizeX = metadata.getPixelsPhysicalSizeX( series );
+			final String spaceUnit = ( null == pixelsPhysicalSizeX ) ? "pixels" : pixelsPhysicalSizeX.unit().getSymbol();
+			final Time pixelsTimeIncrement = metadata.getPixelsTimeIncrement( series );
+			final String timeUnit = ( null == pixelsTimeIncrement ) ? "frame" : pixelsTimeIncrement.unit().getSymbol();
 			return new String[] { spaceUnit, timeUnit };
 		}
 		catch ( final IOException | FormatException e )
