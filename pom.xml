@@ -8,12 +8,12 @@
 		<version>29.0.0</version>
 	</parent>
 
-	<artifactId>TrackMateCSVImporter_</artifactId>
+	<artifactId>TrackMate-CSVImporter</artifactId>
 	<version>1.0.3-SNAPSHOT</version>
 
-	<name>plugins/TrackMateCSVImporter_.jar</name>
-	<description>TrackMate detector that imports detections from a CSV file.</description>
-	<url>https://github.com/tinevez/TrackMateCSVImporter</url>
+	<name>TrackMate CSV Importer</name>
+	<description>Import detections and tracks from a CSV file into TrackMate.</description>
+	<url>https://github.com/tinevez/TrackMate-CSVImporter</url>
 	<inceptionYear>2017</inceptionYear>
 	<organization>
 		<name>Fiji</name>
@@ -70,15 +70,15 @@
 		<connection>scm:git:git@github.com/tinevez/TrackMateCSVImporter</connection>
 		<developerConnection>scm:git:git@github.com/tinevez/TrackMateCSVImporter</developerConnection>
 		<tag>HEAD</tag>
-		<url>git@github.com/tinevez/TrackMateCSVImporter</url>
+		<url>git@github.com/tinevez/TrackMate-CSVImporter</url>
 	</scm>
 	<issueManagement>
-		<system>gitlab</system>
-		<url>https://github.com/tinevez/TrackMateCSVImporter/issues</url>
+		<system>GitHub issues</system>
+		<url>https://github.com/tinevez/TrackMate-CSVImporter/issues</url>
 	</issueManagement>
 	<ciManagement>
-		 <system>gitlab-ci</system>
-		<url>git:git@github.com/tinevez/TrackMateCSVImporter</url>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/tinevez/TrackMate-CSVImporter</url>
 	</ciManagement>
 
 	<properties>
