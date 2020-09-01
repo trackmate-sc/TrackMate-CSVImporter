@@ -67,8 +67,8 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git@github.com/tinevez/TrackMateCSVImporter</connection>
-		<developerConnection>scm:git:git@github.com/tinevez/TrackMateCSVImporter</developerConnection>
+		<connection>scm:git:git@github.com/tinevez/TrackMate-CSVImporter</connection>
+		<developerConnection>scm:git:git@github.com/tinevez/TrackMate-CSVImporter</developerConnection>
 		<tag>HEAD</tag>
 		<url>git@github.com/tinevez/TrackMate-CSVImporter</url>
 	</scm>
