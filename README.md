@@ -1,4 +1,4 @@
-[![](https://travis-ci.org/tinevez/TrackMate-CSVImporter.svg?branch=master)](https://travis-ci.org/tinevez/TrackMate-CSVImporter)
+[![Build Status](https://travis-ci.org/tinevez/TrackMate-CSVImporter.svg?branch=master)](https://travis-ci.org/tinevez/TrackMate-CSVImporter)
 
 # CSV to TrackMate importer. 
 
