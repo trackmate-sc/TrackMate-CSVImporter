@@ -1,3 +1,5 @@
+[![](https://travis-ci.org/tinevez/TrackMate-CSVImporter.svg?branch=master)](https://travis-ci.org/tinevez/TrackMate-CSVImporter)
+
 # CSV to TrackMate importer. 
 
 The importer can be found in the `Plugins > Tracking > TrackMate CSV importer` menu.
