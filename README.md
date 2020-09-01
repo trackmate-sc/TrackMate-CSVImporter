@@ -12,7 +12,7 @@ Open the target image in Fiji, and browse to the CSV file from the GUI. It will 
 
 Depending on whether you specify to import the track values or not, the TrackMate GUI will be created at a different stage. 
 
-## Running the exporter from the command line.
+## Running the importer from the command line.
 
 You can use Fiji in headless mode, to call the Jython script 
 `CsvToTrackMate.py` that will parse arguments and configure the 

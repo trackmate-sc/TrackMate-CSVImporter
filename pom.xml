@@ -82,7 +82,7 @@
 	</ciManagement>
 
 	<properties>
-		<package-name>fiji.plugin.trackmate.exporter.csv</package-name>
+		<package-name>fiji.plugin.trackmate.importer.csv</package-name>
 		<license.licenseName>gpl_v3</license.licenseName>
 		<license.copyrightOwners>Institut Pasteur.</license.copyrightOwners>
 		<license.projectName>A CSV importer for TrackMate.</license.projectName>

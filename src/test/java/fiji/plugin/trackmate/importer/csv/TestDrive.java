@@ -1,4 +1,4 @@
-package fiji.plugin.trackmate.exporter.csv;
+package fiji.plugin.trackmate.importer.csv;
 
 import java.io.File;
 import java.util.Locale;
@@ -23,15 +23,12 @@ public class TestDrive
 		final File impFile = new File( "samples/test-image.tif" );
 		IJ.openImage( impFile.getAbsolutePath() ).show();
 
-//		final TrackMateExporterPlugin_ importer = new TrackMateExporterPlugin_();
-//		importer.run( csvFile.getAbsolutePath() );
-
 		SwingUtilities.invokeLater( new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				final ExporterController controller = new ExporterController();
+				final ImporterController controller = new ImporterController();
 				controller.setCSVFile( csvFile  );
 				controller.setXColumn( "Center_of_the_object_0" );
 				controller.setYColumn( "Center_of_the_object_1" );

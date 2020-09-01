@@ -1,4 +1,4 @@
-package fiji.plugin.trackmate.exporter.csv;
+package fiji.plugin.trackmate.importer.csv;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -39,17 +39,17 @@ import org.scijava.util.VersionUtils;
 import fiji.plugin.trackmate.Logger;
 import ij.ImagePlus;
 
-public class ExporterPanel extends JPanel
+public class ImporterPanel extends JPanel
 {
 	private static final long serialVersionUID = 1L;
 
-	static final ImageIcon ICON = new ImageIcon( ExporterPanel.class.getResource( "TrackMateCSVImporterLogo.png" ) );
+	static final ImageIcon ICON = new ImageIcon( ImporterPanel.class.getResource( "TrackMateCSVImporterLogo.png" ) );
 
 	final JTextField textFieldFile;
 
 	final JButton btnBrowse;
 
-	final JButton btnExport;
+	final JButton btnImport;
 
 	final JComboBox< ImagePlus > comboBoxImp;
 
@@ -79,11 +79,11 @@ public class ExporterPanel extends JPanel
 
 	private final JTextPane jTextPaneLog;
 
-	private final ExporterLogger logger;
+	private final ImporterLogger logger;
 
 	private final JProgressBar progressBar;
 
-	public ExporterPanel()
+	public ImporterPanel()
 	{
 		final Font smallFont = getFont().deriveFont( getFont().getSize2D() - 1f );
 		final Font bigFont = getFont().deriveFont( getFont().getSize2D() + 2f ).deriveFont( Font.BOLD );
@@ -358,13 +358,13 @@ public class ExporterPanel extends JPanel
 		panelLog.add( scrollPane, BorderLayout.CENTER );
 		jTextPaneLog.setBackground( getBackground() );
 
-		final JPanel panelButtonExport = new JPanel();
-		final FlowLayout flowLayout = ( FlowLayout ) panelButtonExport.getLayout();
+		final JPanel panelButtonImport = new JPanel();
+		final FlowLayout flowLayout = ( FlowLayout ) panelButtonImport.getLayout();
 		flowLayout.setAlignment( FlowLayout.RIGHT );
-		panelLog.add( panelButtonExport, BorderLayout.SOUTH );
+		panelLog.add( panelButtonImport, BorderLayout.SOUTH );
 
-		btnExport = new JButton( "Export" );
-		panelButtonExport.add( btnExport );
+		btnImport = new JButton( "Import" );
+		panelButtonImport.add( btnImport );
 
 		this.progressBar = new JProgressBar();
 		panelLog.add( progressBar, BorderLayout.NORTH );
@@ -373,13 +373,13 @@ public class ExporterPanel extends JPanel
 		add( panelTitle, BorderLayout.NORTH );
 		panelTitle.setLayout( new BorderLayout( 0, 0 ) );
 
-		final JLabel lblTrackmateCsvImporter = new JLabel( "TrackMate CSV importer v" + VersionUtils.getVersion( ExporterPanel.class ), ICON, JLabel.CENTER );
+		final JLabel lblTrackmateCsvImporter = new JLabel( "TrackMate CSV importer v" + VersionUtils.getVersion( ImporterPanel.class ), ICON, JLabel.CENTER );
 		lblTrackmateCsvImporter.setFont( bigFont );
 		lblTrackmateCsvImporter.setPreferredSize( new Dimension( 100, 50 ) );
 		lblTrackmateCsvImporter.setHorizontalAlignment( SwingConstants.CENTER );
 		panelTitle.add( lblTrackmateCsvImporter, BorderLayout.NORTH );
 
-		this.logger = new ExporterLogger();
+		this.logger = new ImporterLogger();
 
 	}
 
@@ -388,18 +388,18 @@ public class ExporterPanel extends JPanel
 		return logger;
 	}
 
-	private class ExporterLogger extends Logger
+	private class ImporterLogger extends Logger
 	{
 		@Override
 		public void log( final String message, final Color color )
 		{
-			ExporterPanel.this.log( message, color );
+			ImporterPanel.this.log( message, color );
 		}
 
 		@Override
 		public void error( final String message )
 		{
-			ExporterPanel.this.log( message, Logger.ERROR_COLOR );
+			ImporterPanel.this.log( message, Logger.ERROR_COLOR );
 		}
 
 		@Override
@@ -411,7 +411,7 @@ public class ExporterPanel extends JPanel
 		@Override
 		public void setStatus( final String status )
 		{
-			ExporterPanel.this.log( status, Logger.BLUE_COLOR );
+			ImporterPanel.this.log( status, Logger.BLUE_COLOR );
 		}
 	}
 

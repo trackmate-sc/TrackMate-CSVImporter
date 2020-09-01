@@ -1,4 +1,4 @@
-package fiji.plugin.trackmate.exporter.csv;
+package fiji.plugin.trackmate.importer.csv;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,7 +61,7 @@ import ome.units.quantity.Length;
 import ome.units.quantity.Time;
 import ome.xml.model.primitives.PositiveInteger;
 
-public class TrackMateExporter
+public class TrackMateImporter
 {
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd --- HH:mm:ss" );
@@ -98,7 +98,7 @@ public class TrackMateExporter
 
 	private final boolean declareAllFeatures;
 
-	private TrackMateExporter( final String csvFilePath, final ImagePlus imp, final String imageFilePath, final boolean declareAllFeatures, final int xCol, final int yCol, final int zCol, final int radiusCol, final int frameCol, final int qualityCol, final int idCol, final int nameCol, final int trackCol, final double radius, final Logger logger )
+	private TrackMateImporter( final String csvFilePath, final ImagePlus imp, final String imageFilePath, final boolean declareAllFeatures, final int xCol, final int yCol, final int zCol, final int radiusCol, final int frameCol, final int qualityCol, final int idCol, final int nameCol, final int trackCol, final double radius, final Logger logger )
 	{
 		this.csvFilePath = csvFilePath;
 		this.imp = imp;
@@ -117,7 +117,7 @@ public class TrackMateExporter
 		this.logger = logger;
 	}
 
-	public boolean exportTo( final File targetFile )
+	public boolean saveTo( final File targetFile )
 	{
 		final StringBuilder errorHolder = new StringBuilder();
 
@@ -151,10 +151,10 @@ public class TrackMateExporter
 
 		final TmXmlWriter writer = new TmXmlWriter( targetFile, logger );
 
-		final String log = "Exported to TrackMate from CSV file "
+		final String log = "Imported into TrackMate from CSV file "
 				+ csvFilePath + '\n'
 				+ "On the " + DATE_FORMAT.format( new Date() ) + '\n'
-				+ "By TrackMate CSV Exporter v " + VersionUtils.getVersion( TrackMateExporter.class ) + '\n';
+				+ "By TrackMate CSV Importer v " + VersionUtils.getVersion( TrackMateImporter.class ) + '\n';
 		writer.appendLog( log );
 		writer.appendModel( model );
 		writer.appendSettings( settings );
@@ -724,9 +724,9 @@ public class TrackMateExporter
 			return this;
 		}
 
-		public TrackMateExporter create()
+		public TrackMateImporter create()
 		{
-			return new TrackMateExporter(
+			return new TrackMateImporter(
 					values.csvFilePath,
 					values.imp,
 					values.imageFilePath,

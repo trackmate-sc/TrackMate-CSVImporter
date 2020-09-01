@@ -1,4 +1,4 @@
-package fiji.plugin.trackmate.exporter.csv;
+package fiji.plugin.trackmate.importer.csv;
 
 import java.io.File;
 import java.util.Locale;
@@ -7,16 +7,15 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import fiji.plugin.trackmate.LoadTrackMatePlugIn_;
-import fiji.plugin.trackmate.exporter.csv.TrackMateExporter;
 import ij.ImageJ;
 
-public class CommandLineExportTestDrive
+public class CommandLineImportTestDrive
 {
 
 	public static void main( final String[] args ) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException
 	{
 		/*
-		 * Export the data.
+		 * Import the data.
 		 */
 
 		final File csvFile = new File( "samples/data.csv" );
@@ -27,7 +26,7 @@ public class CommandLineExportTestDrive
 		final int zCol = 3;
 		final double radius = 1.;
 
-		final TrackMateExporter exporter = TrackMateExporter.builder()
+		final TrackMateImporter importer = TrackMateImporter.builder()
 				.csvFilePath( csvFile.getAbsolutePath() )
 				.imageFilePath( impFile.getAbsolutePath() )
 				.xCol( xCol )
@@ -36,17 +35,17 @@ public class CommandLineExportTestDrive
 				.frameCol( frameCol )
 				.radius( radius )
 				.create();
-		
+
 		final File targetFile = new File("samples/test.xml");
-		final boolean ok = exporter.exportTo( targetFile );
+		final boolean ok = importer.saveTo( targetFile );
 		if ( !ok )
 		{
-			System.err.println( exporter.getErrorMessage() );
+			System.err.println( importer.getErrorMessage() );
 			return;
 		}
 
 		/*
-		 * Re-open the exported data in TrackMate.
+		 * Re-open the imported data in TrackMate.
 		 */
 
 		Locale.setDefault( Locale.US );

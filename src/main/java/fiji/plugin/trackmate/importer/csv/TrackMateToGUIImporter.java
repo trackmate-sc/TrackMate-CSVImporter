@@ -1,4 +1,4 @@
-package fiji.plugin.trackmate.exporter.csv;
+package fiji.plugin.trackmate.importer.csv;
 
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_FRAME_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_ID_COLUMN_NAME;
@@ -30,12 +30,12 @@ import ij.ImagePlus;
 import net.imglib2.algorithm.Algorithm;
 
 /**
- * Exports a CSV file to a TrackMate instance and shows it in the TrackMate GUI
+ * Import a CSV file to a TrackMate instance and shows it in the TrackMate GUI
  * wizard.
  *
  * @author Jean-Yves Tinevez
  */
-public class TrackMateToGUIExporter implements Algorithm
+public class TrackMateToGUIImporter implements Algorithm
 {
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat( "yyyy-MM-dd --- HH:mm:ss" );
@@ -54,7 +54,7 @@ public class TrackMateToGUIExporter implements Algorithm
 
 	private final double radius;
 
-	public TrackMateToGUIExporter( final String filePath, final Map< String, Integer > fieldMap, final double radius, final boolean computeAllFeatures, final ImagePlus imp, final Logger logger )
+	public TrackMateToGUIImporter( final String filePath, final Map< String, Integer > fieldMap, final double radius, final boolean computeAllFeatures, final ImagePlus imp, final Logger logger )
 	{
 		this.filePath = filePath;
 		this.fieldMap = fieldMap;
@@ -84,7 +84,7 @@ public class TrackMateToGUIExporter implements Algorithm
 		final int nameCol = Optional.ofNullable( fieldMap.get( KEY_NAME_COLUMN_NAME ) ).orElse( noCol ).intValue();
 		final int trackCol = Optional.ofNullable( fieldMap.get( KEY_TRACK_COLUMN_NAME ) ).orElse( noCol ).intValue();
 
-		final TrackMateExporter exporter = TrackMateExporter.builder()
+		final TrackMateImporter importer = TrackMateImporter.builder()
 				.csvFilePath( filePath )
 				.imp( imp )
 				.declareAllFeatures( computeAllFeatures )
@@ -101,27 +101,27 @@ public class TrackMateToGUIExporter implements Algorithm
 				.logger( logger )
 				.create();
 
-		final String log = "Exporting to TrackMate from CSV file "
+		final String log = "Imported into TrackMate from CSV file "
 				+ filePath + '\n'
 				+ "On the " + DATE_FORMAT.format( new Date() ) + '\n'
-				+ "By TrackMate CSV Exporter v " + VersionUtils.getVersion( TrackMateToGUIExporter.class ) + '\n';
+				+ "By TrackMate CSV Importer v " + VersionUtils.getVersion( TrackMateToGUIImporter.class ) + '\n';
 		logger.log( log + '\n' );
 
 		final String spaceUnit = imp.getCalibration().getUnit();
 		final String timeUnit = imp.getCalibration().getTimeUnit();
 		final double frameInterval = imp.getCalibration().frameInterval;
 
-		final Model model = exporter.getModel( frameInterval, spaceUnit, timeUnit );
+		final Model model = importer.getModel( frameInterval, spaceUnit, timeUnit );
 		if ( null == model )
 		{
-			this.errorMessage = exporter.getErrorMessage();
+			this.errorMessage = importer.getErrorMessage();
 			return false;
 		}
 
-		final Settings settings = exporter.getSettings();
+		final Settings settings = importer.getSettings();
 		if ( null == settings )
 		{
-			this.errorMessage = exporter.getErrorMessage();
+			this.errorMessage = importer.getErrorMessage();
 			return false;
 		}
 
@@ -149,7 +149,7 @@ public class TrackMateToGUIExporter implements Algorithm
 			view.setDisplaySettings( key, displaySettings.get( key ) );
 		view.render();
 		controller.getGUI().getLogger().log( log );
-		logger.log( "Export complete.\n" );
+		logger.log( "Import complete.\n" );
 
 		return true;
 	}

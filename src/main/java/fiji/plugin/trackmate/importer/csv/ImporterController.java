@@ -1,4 +1,4 @@
-package fiji.plugin.trackmate.exporter.csv;
+package fiji.plugin.trackmate.importer.csv;
 
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_FRAME_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_ID_COLUMN_NAME;
@@ -31,11 +31,11 @@ import org.apache.commons.csv.CSVParser;
 import ij.ImagePlus;
 import ij.io.FileInfo;
 
-public class ExporterController
+public class ImporterController
 {
 	private static final String NONE_COLUMN = "Don't use";
 
-	private final ExporterPanel view;
+	private final ImporterPanel view;
 
 	private File file;
 
@@ -47,16 +47,16 @@ public class ExporterController
 
 	private Map< String, Integer > headerMap;
 
-	public ExporterController()
+	public ImporterController()
 	{
-		this.view = new ExporterPanel();
+		this.view = new ImporterPanel();
 		view.btnBrowse.addActionListener( ( e ) -> browse() );
 		view.textFieldFile.addActionListener( ( e ) -> setCSVFile( new File( view.textFieldFile.getText() ) ) );
-		view.btnExport.addActionListener( ( e ) -> export() );
+		view.btnImport.addActionListener( ( e ) -> doImport() );
 		view.comboBoxImp.addActionListener( ( e ) -> checkImage() );
 		checkImage();
 		final JFrame frame = new JFrame( "TrackMate CSV importer" );
-		frame.setIconImage( ExporterPanel.ICON.getImage() );
+		frame.setIconImage( ImporterPanel.ICON.getImage() );
 		frame.getContentPane().add( view );
 		frame.pack();
 		frame.setLocationRelativeTo( null );
@@ -126,10 +126,10 @@ public class ExporterController
 		view.chckbxComputeFeatures.setSelected( doComputeFeatures );
 	}
 
-	private void export()
+	private void doImport()
 	{
-		view.btnExport.setEnabled( false );
-		new Thread( "TrackMate CSV exporter thread" )
+		view.btnImport.setEnabled( false );
+		new Thread( "TrackMate CSV importer thread" )
 		{
 			@Override
 			public void run()
@@ -166,17 +166,17 @@ public class ExporterController
 
 					final ImagePlus imp = ( ImagePlus ) view.comboBoxImp.getSelectedItem();
 					final double radius = ( ( Number ) view.ftfRadius.getValue() ).doubleValue();
-					final TrackMateToGUIExporter exporter = new TrackMateToGUIExporter( filePath, fieldMap, radius, view.chckbxComputeFeatures.isSelected(), imp, view.getLogger() );
-					if ( !exporter.checkInput() || !exporter.process() )
+					final TrackMateToGUIImporter importer = new TrackMateToGUIImporter( filePath, fieldMap, radius, view.chckbxComputeFeatures.isSelected(), imp, view.getLogger() );
+					if ( !importer.checkInput() || !importer.process() )
 					{
-						error( "Error importing CSV file:\n" + exporter.getErrorMessage() );
+						error( "Error importing CSV file:\n" + importer.getErrorMessage() );
 						return;
 					}
-					log( "Export successful.\n" );
+					log( "Import successful.\n" );
 				}
 				finally
 				{
-					view.btnExport.setEnabled( true );
+					view.btnImport.setEnabled( true );
 				}
 			}
 		}.start();
@@ -189,14 +189,14 @@ public class ExporterController
 		if ( i < 0 )
 		{
 			error( "Please open and select an image.\n" );
-			view.btnExport.setEnabled( false );
+			view.btnImport.setEnabled( false );
 			return false;
 		}
 		final ImagePlus imp = view.comboBoxImp.getItemAt( i );
 		if ( null == imp )
 		{
 			error( "Please open and select an image.\n" );
-			view.btnExport.setEnabled( false );
+			view.btnImport.setEnabled( false );
 			return false;
 		}
 
@@ -214,7 +214,7 @@ public class ExporterController
 
 		imageOk = true;
 		if ( csvOk )
-			view.btnExport.setEnabled( true );
+			view.btnImport.setEnabled( true );
 
 		return true;
 	}
@@ -256,12 +256,12 @@ public class ExporterController
 		view.textFieldFile.setText( file.getAbsolutePath() );
 		log( "Inspecting CSV file: " + file + '\n' );
 
-		view.btnExport.setEnabled( false );
+		view.btnImport.setEnabled( false );
 		if ( readHeaders() && readMetadata() )
 		{
 			csvOk = true;
 			if ( imageOk )
-				view.btnExport.setEnabled( true );
+				view.btnImport.setEnabled( true );
 		}
 	}
 

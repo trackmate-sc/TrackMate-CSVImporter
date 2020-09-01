@@ -1,29 +1,29 @@
 """
 A Jython script that parse arguments and uses them to configure a CSV to TrackMate 
-exporter. 
+importer. 
 
 This script must be called from Fiji (to have everything on the class path), for instance
 in headless mode. Here is an example of a call from the command line:
 
-./ImageJ-macosx --headless   ../../../TrackMateCSVImporter/scripts/CsvToTrackMate.py 
-	--csvFilePath="../../../TrackMateCSVImporter/samples/data.csv" 
-	--imageFilePath="../../../TrackMateCSVImporter/samples/171004-4mins-tracking.tif"
+./ImageJ-macosx --headless   ../../../TrackMate-CSVImporter/scripts/CsvToTrackMate.py 
+	--csvFilePath="../../../TrackMate-CSVImporter/samples/data.csv" 
+	--imageFilePath="../../../TrackMate-CSVImporter/samples/171004-4mins-tracking.tif"
 	 --xCol=1 
 	 --radius=2 
 	 --yCol=2 
 	 --zCol=3 
 	 --frameCol=0
-	 --targetFilePath="../../../TrackMateCSVImporter/samples/data.xml"
+	 --targetFilePath="../../../TrackMate-CSVImporter/samples/data.xml"
 """
 
-from fiji.plugin.trackmate.exporter.csv import TrackMateExporter
+from fiji.plugin.trackmate.importer.csv import TrackMateImporter
 from java.io import File
 import argparse
 
 
 def main(): 
-	parser = argparse.ArgumentParser(description='Launch the TrackMate CSV exporter.')
-	parser.add_argument('--csvFilePath', type=str, help='The path to the CSV file to export.', required=True)
+	parser = argparse.ArgumentParser(description='Launch the TrackMate CSV importer.')
+	parser.add_argument('--csvFilePath', type=str, help='The path to the CSV file to import.', required=True)
 	parser.add_argument('--imageFilePath', type=str, help='The path to the image file.', required=True)
 	parser.add_argument('--targetFilePath', type=str, help='The path to the TrackMate xml file to create.', required=True)
 	parser.add_argument('--xCol', type=int, help='The column where the spot X positions are listed (0-based).', required=True)
@@ -36,10 +36,10 @@ def main():
 	parser.add_argument('--trackCol', type=int, help='The column where the spot track indices are listed (0-based).')
 	parser.add_argument('--radiusCol', type=int, help='The column where the spot radiuses are listed (0-based).')
 	parser.add_argument('--radius', type=float, help='The default radius, to use if a radius column is not available.')
-	parser.add_argument('--declareAllFeatures', type=bool, help='If true, all available features will be declared in the export.')
+	parser.add_argument('--declareAllFeatures', type=bool, help='If true, all available features will be declared in the import.')
 	args = parser.parse_args()
 
-	builder = TrackMateExporter.builder()
+	builder = TrackMateImporter.builder()
 	builder.csvFilePath( args.csvFilePath )
 	builder.imageFilePath( args.imageFilePath )
 	builder.xCol( args.xCol )
@@ -74,10 +74,10 @@ def main():
 		print( "Please specify at least --radius or --radiusCol" )
 		return
 	
-	exporter = builder.create()
-	ok = exporter.exportTo( File( args.targetFilePath ) )
+	importer = builder.create()
+	ok = importer.saveTo( File( args.targetFilePath ) )
 	if not ok:
-		print( exporter.getErrorMessage() )
+		print( importer.getErrorMessage() )
 
 
 #___________________________

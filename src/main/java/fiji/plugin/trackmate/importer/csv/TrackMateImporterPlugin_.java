@@ -1,4 +1,4 @@
-package fiji.plugin.trackmate.exporter.csv;
+package fiji.plugin.trackmate.importer.csv;
 
 import java.io.File;
 
@@ -6,7 +6,7 @@ import javax.swing.SwingUtilities;
 
 import ij.plugin.PlugIn;
 
-public class TrackMateExporterPlugin_ implements PlugIn
+public class TrackMateImporterPlugin_ implements PlugIn
 {
 
 	@Override
@@ -19,7 +19,7 @@ public class TrackMateExporterPlugin_ implements PlugIn
 			{
 				try
 				{
-					final ExporterController controller = new ExporterController();
+					final ImporterController controller = new ImporterController();
 					if ( null != arg && !arg.isEmpty() )
 						controller.setCSVFile( new File( arg ) );
 				}
