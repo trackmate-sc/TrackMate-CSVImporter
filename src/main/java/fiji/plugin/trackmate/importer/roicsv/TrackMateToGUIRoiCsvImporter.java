@@ -1,13 +1,14 @@
 package fiji.plugin.trackmate.importer.roicsv;
 
-import java.util.Map;
-
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
+import fiji.plugin.trackmate.SelectionModel;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.TrackMate;
 import fiji.plugin.trackmate.gui.GuiUtils;
 import fiji.plugin.trackmate.gui.TrackMateGUIController;
+import fiji.plugin.trackmate.gui.displaysettings.DisplaySettings;
+import fiji.plugin.trackmate.gui.displaysettings.DisplaySettingsIO;
 import fiji.plugin.trackmate.visualization.hyperstack.HyperStackDisplayer;
 import ij.ImagePlus;
 import net.imglib2.algorithm.Algorithm;
@@ -85,15 +86,15 @@ public class TrackMateToGUIRoiCsvImporter implements Algorithm
 		logger.log( "Done.\n" );
 
 		logger.log( "Launching GUI.\n" );
-		final TrackMateGUIController controller = new TrackMateGUIController( trackmate );
+		final DisplaySettings ds = DisplaySettingsIO.readUserDefault();
+		final SelectionModel selectionModel = new SelectionModel( model );
+
+		final TrackMateGUIController controller = new TrackMateGUIController( trackmate, ds, selectionModel );
 		GuiUtils.positionWindow( controller.getGUI(), settings.imp.getWindow() );
 		final String guiState =  "SpotFilter";
 		controller.setGUIStateString( guiState );
-		final HyperStackDisplayer view = new HyperStackDisplayer( model, controller.getSelectionModel(), settings.imp );
+		final HyperStackDisplayer view = new HyperStackDisplayer( model, controller.getSelectionModel(), settings.imp, ds );
 		controller.getGuimodel().addView( view );
-		final Map< String, Object > displaySettings = controller.getGuimodel().getDisplaySettings();
-		for ( final String key : displaySettings.keySet() )
-			view.setDisplaySettings( key, displaySettings.get( key ) );
 		view.render();
 		logger.log( "Import complete.\n" );
 

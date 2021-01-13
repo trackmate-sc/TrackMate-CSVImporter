@@ -31,14 +31,11 @@ import fiji.plugin.trackmate.SpotRoi;
 import fiji.plugin.trackmate.detection.ManualDetectorFactory;
 import fiji.plugin.trackmate.exporter.csv.CSVMetadata;
 import fiji.plugin.trackmate.exporter.csv.ImporterUtils;
-import fiji.plugin.trackmate.features.edges.EdgeAnalyzer;
+import fiji.plugin.trackmate.features.edges.EdgeSpeedAnalyzer;
 import fiji.plugin.trackmate.features.edges.EdgeTargetAnalyzer;
 import fiji.plugin.trackmate.features.edges.EdgeTimeLocationAnalyzer;
-import fiji.plugin.trackmate.features.edges.EdgeVelocityAnalyzer;
 import fiji.plugin.trackmate.features.manual.ManualEdgeColorAnalyzer;
 import fiji.plugin.trackmate.features.manual.ManualSpotColorAnalyzerFactory;
-import fiji.plugin.trackmate.features.spot.SpotAnalyzerFactory;
-import fiji.plugin.trackmate.features.track.TrackAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackDurationAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackIndexAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackLocationAnalyzer;
@@ -46,9 +43,6 @@ import fiji.plugin.trackmate.features.track.TrackSpeedStatisticsAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackSpotQualityFeatureAnalyzer;
 import fiji.plugin.trackmate.gui.TrackMateGUIModel;
 import fiji.plugin.trackmate.io.TmXmlWriter;
-import fiji.plugin.trackmate.providers.EdgeAnalyzerProvider;
-import fiji.plugin.trackmate.providers.SpotAnalyzerProvider;
-import fiji.plugin.trackmate.providers.TrackAnalyzerProvider;
 import fiji.plugin.trackmate.tracking.ManualTrackerFactory;
 import ij.ImagePlus;
 
@@ -195,33 +189,7 @@ public class TrackMateCsvRoiImporter
 
 		if ( declareAllFeatures )
 		{
-
-			settings.clearSpotAnalyzerFactories();
-			final SpotAnalyzerProvider spotAnalyzerProvider = new SpotAnalyzerProvider();
-			final List< String > spotAnalyzerKeys = spotAnalyzerProvider.getKeys();
-			for ( final String key : spotAnalyzerKeys )
-			{
-				final SpotAnalyzerFactory< ? > spotFeatureAnalyzer = spotAnalyzerProvider.getFactory( key );
-				settings.addSpotAnalyzerFactory( spotFeatureAnalyzer );
-			}
-
-			settings.clearEdgeAnalyzers();
-			final EdgeAnalyzerProvider edgeAnalyzerProvider = new EdgeAnalyzerProvider();
-			final List< String > edgeAnalyzerKeys = edgeAnalyzerProvider.getKeys();
-			for ( final String key : edgeAnalyzerKeys )
-			{
-				final EdgeAnalyzer edgeAnalyzer = edgeAnalyzerProvider.getFactory( key );
-				settings.addEdgeAnalyzer( edgeAnalyzer );
-			}
-
-			settings.clearTrackAnalyzers();
-			final TrackAnalyzerProvider trackAnalyzerProvider = new TrackAnalyzerProvider();
-			final List< String > trackAnalyzerKeys = trackAnalyzerProvider.getKeys();
-			for ( final String key : trackAnalyzerKeys )
-			{
-				final TrackAnalyzer trackAnalyzer = trackAnalyzerProvider.getFactory( key );
-				settings.addTrackAnalyzer( trackAnalyzer );
-			}
+			settings.addAllAnalyzers();
 		}
 		else
 		{
@@ -235,7 +203,7 @@ public class TrackMateCsvRoiImporter
 			// Edge features.
 			settings.addEdgeAnalyzer( new EdgeTargetAnalyzer() );
 			settings.addEdgeAnalyzer( new EdgeTimeLocationAnalyzer() );
-			settings.addEdgeAnalyzer( new EdgeVelocityAnalyzer() );
+			settings.addEdgeAnalyzer( new EdgeSpeedAnalyzer() );
 			settings.addEdgeAnalyzer( new ManualEdgeColorAnalyzer() );
 
 			// Track features.

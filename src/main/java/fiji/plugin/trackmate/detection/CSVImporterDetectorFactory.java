@@ -21,7 +21,7 @@ import org.scijava.plugin.Plugin;
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.Spot;
-import fiji.plugin.trackmate.TrackMatePlugIn_;
+import fiji.plugin.trackmate.TrackMatePlugIn;
 import fiji.plugin.trackmate.gui.ConfigurationPanel;
 import ij.IJ;
 import ij.ImageJ;
@@ -475,6 +475,6 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 		imp.show();
 //		final Roi roi = new RoiDecoder( "samples/SN4_GEMS1_016_ROI_001.roi" ).getRoi();
 //		imp.setRoi( roi );
-		new TrackMatePlugIn_().run( "" );
+		new TrackMatePlugIn().run( "" );
 	}
 }

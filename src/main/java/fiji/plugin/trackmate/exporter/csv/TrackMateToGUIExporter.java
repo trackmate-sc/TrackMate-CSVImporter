@@ -15,11 +15,14 @@ import java.util.Optional;
 
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
+import fiji.plugin.trackmate.SelectionModel;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.TrackMate;
 import fiji.plugin.trackmate.gui.GuiUtils;
 import fiji.plugin.trackmate.gui.TrackMateGUIController;
 import fiji.plugin.trackmate.gui.descriptors.ConfigureViewsDescriptor;
+import fiji.plugin.trackmate.gui.displaysettings.DisplaySettings;
+import fiji.plugin.trackmate.gui.displaysettings.DisplaySettingsIO;
 import fiji.plugin.trackmate.visualization.hyperstack.HyperStackDisplayer;
 import ij.ImagePlus;
 import net.imglib2.algorithm.Algorithm;
@@ -27,7 +30,7 @@ import net.imglib2.algorithm.Algorithm;
 /**
  * Exports a CSV file to a TrackMate instance and shows it in the TrackMate GUI
  * wizard.
- * 
+ *
  * @author Jean-Yves Tinevez
  */
 public class TrackMateToGUIExporter implements Algorithm
@@ -124,16 +127,16 @@ public class TrackMateToGUIExporter implements Algorithm
 		logger.log( "Done.\n" );
 
 		logger.log( "Launching GUI.\n" );
-		final TrackMateGUIController controller = new TrackMateGUIController( trackmate );
+		final DisplaySettings ds = DisplaySettingsIO.readUserDefault();
+		final SelectionModel selectionModel = new SelectionModel( model );
+
+		final TrackMateGUIController controller = new TrackMateGUIController( trackmate, ds, selectionModel );
 		GuiUtils.positionWindow( controller.getGUI(), settings.imp.getWindow() );
 		final boolean importTrack = fieldMap.get( KEY_TRACK_COLUMN_NAME ) != null;
 		final String guiState = importTrack ? ConfigureViewsDescriptor.KEY : "SpotFilter";
 		controller.setGUIStateString( guiState );
-		final HyperStackDisplayer view = new HyperStackDisplayer( model, controller.getSelectionModel(), settings.imp );
+		final HyperStackDisplayer view = new HyperStackDisplayer( model, controller.getSelectionModel(), settings.imp, ds );
 		controller.getGuimodel().addView( view );
-		final Map< String, Object > displaySettings = controller.getGuimodel().getDisplaySettings();
-		for ( final String key : displaySettings.keySet() )
-			view.setDisplaySettings( key, displaySettings.get( key ) );
 		view.render();
 		logger.log( "Export complete.\n" );
 

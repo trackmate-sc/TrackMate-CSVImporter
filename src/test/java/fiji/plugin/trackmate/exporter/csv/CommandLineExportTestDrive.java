@@ -6,8 +6,7 @@ import java.util.Locale;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import fiji.plugin.trackmate.LoadTrackMatePlugIn_;
-import fiji.plugin.trackmate.exporter.csv.TrackMateExporter;
+import fiji.plugin.trackmate.LoadTrackMatePlugIn;
 import ij.ImageJ;
 
 public class CommandLineExportTestDrive
@@ -36,7 +35,7 @@ public class CommandLineExportTestDrive
 				.frameCol( frameCol )
 				.radius( radius )
 				.create();
-		
+
 		final File targetFile = new File("samples/test.xml");
 		final boolean ok = exporter.exportTo( targetFile );
 		if ( !ok )
@@ -53,9 +52,6 @@ public class CommandLineExportTestDrive
 		UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
 		ImageJ.main( args );
 
-		new LoadTrackMatePlugIn_().run( targetFile.getAbsolutePath() );
-
-
+		new LoadTrackMatePlugIn().run( targetFile.getAbsolutePath() );
 	}
-
 }
