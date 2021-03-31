@@ -17,7 +17,7 @@ public class CsvRoiImporterController
 {
 	private final CsvRoiImporterPanel view;
 
-	private File file;
+	private static File file;
 
 	private boolean imageOk;
 
@@ -115,7 +115,7 @@ public class CsvRoiImporterController
 	private File askForCSVfile()
 	{
 		if ( null == file )
-			this.file = new File( System.getProperty( "user.home" ) );
+			CsvRoiImporterController.file = new File( System.getProperty( "user.home" ) );
 
 		final FileDialog dialog = new FileDialog( new JFrame(), "Open a CSV file", FileDialog.LOAD );
 		dialog.setIconImage( TRACKMATE_ICON.getImage() );
@@ -133,7 +133,7 @@ public class CsvRoiImporterController
 	void setCSVFile( final File file )
 	{
 		csvOk = false;
-		this.file = file;
+		CsvRoiImporterController.file = file;
 		view.textFieldFile.setText( file.getAbsolutePath() );
 		log( "Inspecting CSV file: " + file + '\n' );
 

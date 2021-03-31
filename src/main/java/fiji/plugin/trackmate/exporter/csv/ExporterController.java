@@ -36,7 +36,7 @@ public class ExporterController
 
 	private final ExporterPanel view;
 
-	private File file;
+	private static File file;
 
 	private boolean imageOk;
 
@@ -166,7 +166,7 @@ public class ExporterController
 	private File askForCSVfile()
 	{
 		if ( null == file )
-			this.file = new File( System.getProperty( "user.home" ) );
+			ExporterController.file = new File( System.getProperty( "user.home" ) );
 
 		final FileDialog dialog = new FileDialog( new JFrame(), "Open a CSV file", FileDialog.LOAD );
 		dialog.setIconImage( TRACKMATE_ICON.getImage() );
@@ -184,7 +184,7 @@ public class ExporterController
 	void setCSVFile( final File file )
 	{
 		csvOk = false;
-		this.file = file;
+		ExporterController.file = file;
 		view.textFieldFile.setText( file.getAbsolutePath() );
 		log( "Inspecting CSV file: " + file + '\n' );
 
