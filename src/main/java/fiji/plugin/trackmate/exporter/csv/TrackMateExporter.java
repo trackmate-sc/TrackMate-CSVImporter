@@ -38,8 +38,7 @@ import fiji.plugin.trackmate.features.track.TrackIndexAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackLocationAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackSpeedStatisticsAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackSpotQualityFeatureAnalyzer;
-import fiji.plugin.trackmate.gui.TrackMateGUIModel;
-import fiji.plugin.trackmate.gui.descriptors.ConfigureViewsDescriptor;
+import fiji.plugin.trackmate.gui.wizard.descriptors.ConfigureViewsDescriptor;
 import fiji.plugin.trackmate.io.TmXmlWriter;
 import fiji.plugin.trackmate.tracking.ManualTrackerFactory;
 import ij.ImagePlus;
@@ -140,15 +139,7 @@ public class TrackMateExporter
 		writer.appendLog( log );
 		writer.appendModel( model );
 		writer.appendSettings( settings );
-		writer.appendGUIState( new TrackMateGUIModel()
-		{
-			@Override
-			public String getGUIStateString()
-			{
-				final String guiState = trackCol >= 0 ? ConfigureViewsDescriptor.KEY : "SpotFilter";
-				return guiState;
-			}
-		} );
+		writer.appendGUIState( trackCol >= 0 ? ConfigureViewsDescriptor.KEY : "SpotFilter" );
 
 		try
 		{

@@ -1,14 +1,20 @@
 package fiji.plugin.trackmate.importer.roicsv;
 
+import static fiji.plugin.trackmate.gui.Icons.TRACKMATE_ICON;
+
+import javax.swing.JFrame;
+
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.SelectionModel;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.TrackMate;
 import fiji.plugin.trackmate.gui.GuiUtils;
-import fiji.plugin.trackmate.gui.TrackMateGUIController;
 import fiji.plugin.trackmate.gui.displaysettings.DisplaySettings;
 import fiji.plugin.trackmate.gui.displaysettings.DisplaySettingsIO;
+import fiji.plugin.trackmate.gui.wizard.TrackMateWizardSequence;
+import fiji.plugin.trackmate.gui.wizard.WizardSequence;
+import fiji.plugin.trackmate.visualization.TrackMateModelView;
 import fiji.plugin.trackmate.visualization.hyperstack.HyperStackDisplayer;
 import ij.ImagePlus;
 import net.imglib2.algorithm.Algorithm;
@@ -89,13 +95,19 @@ public class TrackMateToGUIRoiCsvImporter implements Algorithm
 		final DisplaySettings ds = DisplaySettingsIO.readUserDefault();
 		final SelectionModel selectionModel = new SelectionModel( model );
 
-		final TrackMateGUIController controller = new TrackMateGUIController( trackmate, ds, selectionModel );
-		GuiUtils.positionWindow( controller.getGUI(), settings.imp.getWindow() );
-		final String guiState =  "SpotFilter";
-		controller.setGUIStateString( guiState );
-		final HyperStackDisplayer view = new HyperStackDisplayer( model, controller.getSelectionModel(), settings.imp, ds );
-		controller.getGuimodel().addView( view );
-		view.render();
+		// Main view.
+		final TrackMateModelView displayer = new HyperStackDisplayer( model, selectionModel, imp, ds );
+		displayer.render();
+
+		// Wizard.
+		final WizardSequence sequence = new TrackMateWizardSequence( trackmate, selectionModel, ds );
+		final String guiState = "SpotFilter";
+		sequence.setCurrent( guiState );
+		final JFrame frame = sequence.run( "TrackMate on " + imp.getShortTitle() );
+		frame.setIconImage( TRACKMATE_ICON.getImage() );
+		GuiUtils.positionWindow( frame, imp.getWindow() );
+		frame.setVisible( true );
+
 		logger.log( "Import complete.\n" );
 
 		return true;

@@ -8,7 +8,7 @@ import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_TRA
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_X_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Y_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Z_COLUMN_NAME;
-import static fiji.plugin.trackmate.gui.TrackMateWizard.TRACKMATE_ICON;
+import static fiji.plugin.trackmate.gui.Icons.TRACKMATE_ICON;
 
 import java.awt.FileDialog;
 import java.io.File;

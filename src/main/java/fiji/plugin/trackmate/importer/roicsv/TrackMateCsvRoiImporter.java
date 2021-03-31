@@ -41,7 +41,6 @@ import fiji.plugin.trackmate.features.track.TrackIndexAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackLocationAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackSpeedStatisticsAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackSpotQualityFeatureAnalyzer;
-import fiji.plugin.trackmate.gui.TrackMateGUIModel;
 import fiji.plugin.trackmate.io.TmXmlWriter;
 import fiji.plugin.trackmate.tracking.ManualTrackerFactory;
 import ij.ImagePlus;
@@ -136,16 +135,7 @@ public class TrackMateCsvRoiImporter
 		writer.appendLog( log );
 		writer.appendModel( model );
 		writer.appendSettings( settings );
-		writer.appendGUIState( new TrackMateGUIModel()
-		{
-			@Override
-			public String getGUIStateString()
-			{
-				// Because we have no track.
-				final String guiState = "SpotFilter";
-				return guiState;
-			}
-		} );
+		writer.appendGUIState( "SpotFilter" );
 
 		try
 		{

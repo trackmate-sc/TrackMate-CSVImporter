@@ -1,11 +1,21 @@
 package fiji.plugin.trackmate.detection;
 
-import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.*;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_FILE_PATH;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_FRAME_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_ID_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_NAME_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_QUALITY_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_X_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_X_ORIGIN;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Y_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Y_ORIGIN;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Z_COLUMN_NAME;
+import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Z_ORIGIN;
 import static fiji.plugin.trackmate.detection.DetectorKeys.KEY_RADIUS;
-import static fiji.plugin.trackmate.gui.TrackMateWizard.BIG_FONT;
-import static fiji.plugin.trackmate.gui.TrackMateWizard.FONT;
-import static fiji.plugin.trackmate.gui.TrackMateWizard.SMALL_FONT;
-import static fiji.plugin.trackmate.gui.TrackMateWizard.TRACKMATE_ICON;
+import static fiji.plugin.trackmate.gui.Fonts.BIG_FONT;
+import static fiji.plugin.trackmate.gui.Fonts.FONT;
+import static fiji.plugin.trackmate.gui.Fonts.SMALL_FONT;
+import static fiji.plugin.trackmate.gui.Icons.TRACKMATE_ICON;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -45,7 +55,7 @@ import org.apache.commons.csv.CSVParser;
 
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
-import fiji.plugin.trackmate.gui.ConfigurationPanel;
+import fiji.plugin.trackmate.gui.components.ConfigurationPanel;
 
 public class CSVImporterConfigPanel extends ConfigurationPanel
 {

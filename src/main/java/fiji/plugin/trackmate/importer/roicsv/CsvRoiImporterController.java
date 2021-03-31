@@ -1,6 +1,6 @@
 package fiji.plugin.trackmate.importer.roicsv;
 
-import static fiji.plugin.trackmate.gui.TrackMateWizard.TRACKMATE_ICON;
+import static fiji.plugin.trackmate.gui.Icons.TRACKMATE_ICON;
 
 import java.awt.FileDialog;
 import java.io.File;
