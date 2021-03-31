@@ -6,7 +6,7 @@ import java.util.Locale;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import fiji.plugin.trackmate.importer.roicsv.TrackMateCsvRoiImporterPlugin_;
+import fiji.plugin.trackmate.importer.roicsv.TrackMateCsvRoiImporterPlugin;
 import ij.IJ;
 import ij.ImageJ;
 
@@ -23,7 +23,7 @@ public class TestDriveRoisGUI
 		final File impFile = new File( "samples/200512_NeisseriaMeningitidis_WT_iRFP_Stage3.tif" );
 		IJ.openImage( impFile.getAbsolutePath() ).show();
 
-		new TrackMateCsvRoiImporterPlugin_().run( csvFile.getAbsolutePath() );
+		new TrackMateCsvRoiImporterPlugin().run( csvFile.getAbsolutePath() );
 
 	}
 

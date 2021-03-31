@@ -1,4 +1,4 @@
-package fiji.plugin.trackmate.importer.roicsv;
+package fiji.plugin.trackmate.exporter.csv;
 
 import java.io.File;
 import java.util.Locale;
@@ -7,10 +7,11 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import ij.IJ;
 import ij.ImageJ;
 import ij.plugin.PlugIn;
 
-public class TrackMateCsvRoiImporterPlugin_ implements PlugIn
+public class TrackMateExporterPlugin implements PlugIn
 {
 
 	@Override
@@ -21,7 +22,7 @@ public class TrackMateCsvRoiImporterPlugin_ implements PlugIn
 			@Override
 			public void run()
 			{
-				final CsvRoiImporterController controller = new CsvRoiImporterController();
+				final ExporterController controller = new ExporterController();
 				if ( null != arg && !arg.isEmpty() )
 					controller.setCSVFile( new File( arg ) );
 			}
@@ -34,6 +35,10 @@ public class TrackMateCsvRoiImporterPlugin_ implements PlugIn
 		UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
 		ImageJ.main( args );
 
-		new TrackMateCsvRoiImporterPlugin_().run( "" );
+		final File csvFile = new File( "samples/data.csv" );
+		final File impFile = new File( "samples/171004-4mins-tracking.tif" );
+		IJ.openImage( impFile.getAbsolutePath() ).show();
+
+		new TrackMateExporterPlugin().run( csvFile.getAbsolutePath() );
 	}
 }
