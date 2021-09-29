@@ -9,6 +9,7 @@ import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_TRA
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_X_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Y_COLUMN_NAME;
 import static fiji.plugin.trackmate.detection.CSVImporterDetectorFactory.KEY_Z_COLUMN_NAME;
+import static fiji.plugin.trackmate.gui.Icons.TRACKMATE_ICON;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -16,15 +17,20 @@ import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.swing.JFrame;
+
 import org.scijava.util.VersionUtils;
 
 import fiji.plugin.trackmate.Logger;
 import fiji.plugin.trackmate.Model;
+import fiji.plugin.trackmate.SelectionModel;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.TrackMate;
 import fiji.plugin.trackmate.gui.GuiUtils;
-import fiji.plugin.trackmate.gui.TrackMateGUIController;
-import fiji.plugin.trackmate.gui.descriptors.ConfigureViewsDescriptor;
+import fiji.plugin.trackmate.gui.displaysettings.DisplaySettings;
+import fiji.plugin.trackmate.gui.displaysettings.DisplaySettingsIO;
+import fiji.plugin.trackmate.gui.wizard.TrackMateWizardSequence;
+import fiji.plugin.trackmate.gui.wizard.descriptors.ConfigureViewsDescriptor;
 import fiji.plugin.trackmate.visualization.hyperstack.HyperStackDisplayer;
 import ij.ImagePlus;
 import net.imglib2.algorithm.Algorithm;
@@ -137,18 +143,23 @@ public class TrackMateToGUIImporter implements Algorithm
 		logger.log( "Done.\n" );
 
 		logger.log( "Launching GUI.\n" );
-		final TrackMateGUIController controller = new TrackMateGUIController( trackmate );
-		GuiUtils.positionWindow( controller.getGUI(), settings.imp.getWindow() );
+		final SelectionModel selectionModel = new SelectionModel( model );
+		final DisplaySettings ds = DisplaySettingsIO.readUserDefault();
+		final TrackMateWizardSequence sequence = new TrackMateWizardSequence( trackmate, selectionModel, ds );
+		final JFrame frame = sequence.run( "TrackMate importing CSV " + filePath );
+
 		final boolean importTrack = fieldMap.get( KEY_TRACK_COLUMN_NAME ) != null;
 		final String guiState = importTrack ? ConfigureViewsDescriptor.KEY : "SpotFilter";
-		controller.setGUIStateString( guiState );
-		final HyperStackDisplayer view = new HyperStackDisplayer( model, controller.getSelectionModel(), settings.imp );
-		controller.getGuimodel().addView( view );
-		final Map< String, Object > displaySettings = controller.getGuimodel().getDisplaySettings();
-		for ( final String key : displaySettings.keySet() )
-			view.setDisplaySettings( key, displaySettings.get( key ) );
+		sequence.setCurrent( guiState );
+
+		frame.setIconImage( TRACKMATE_ICON.getImage() );
+		GuiUtils.positionWindow( frame, imp.getWindow() );
+		frame.setVisible( true );
+		
+		final HyperStackDisplayer view = new HyperStackDisplayer( model, selectionModel, settings.imp, ds );
 		view.render();
-		controller.getGUI().getLogger().log( log );
+
+		model.getLogger().log( log );
 		logger.log( "Import complete.\n" );
 
 		return true;

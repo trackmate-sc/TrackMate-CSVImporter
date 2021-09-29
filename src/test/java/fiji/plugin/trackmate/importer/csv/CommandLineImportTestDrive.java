@@ -6,7 +6,7 @@ import java.util.Locale;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import fiji.plugin.trackmate.LoadTrackMatePlugIn_;
+import fiji.plugin.trackmate.LoadTrackMatePlugIn;
 import ij.ImageJ;
 
 public class CommandLineImportTestDrive
@@ -52,9 +52,6 @@ public class CommandLineImportTestDrive
 		UIManager.setLookAndFeel( UIManager.getSystemLookAndFeelClassName() );
 		ImageJ.main( args );
 
-		new LoadTrackMatePlugIn_().run( targetFile.getAbsolutePath() );
-
-
+		new LoadTrackMatePlugIn().run( targetFile.getAbsolutePath() );
 	}
-
 }

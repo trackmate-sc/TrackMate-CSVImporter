@@ -6,7 +6,6 @@ import java.util.Locale;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import fiji.plugin.trackmate.importer.csv.TrackMateImporterPlugin_;
 import ij.IJ;
 import ij.ImageJ;
 
