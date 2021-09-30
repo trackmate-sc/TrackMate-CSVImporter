@@ -6,7 +6,7 @@ import javax.swing.SwingUtilities;
 
 import ij.plugin.PlugIn;
 
-public class TrackMateImporterPlugin_ implements PlugIn
+public class TrackMateImporterPlugin implements PlugIn
 {
 
 	@Override

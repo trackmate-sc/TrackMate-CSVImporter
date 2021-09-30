@@ -22,6 +22,6 @@ public class InvestigateInconsistency
 		final File impFile = new File( "samples/180319_csv_inconsistency/fakeImages.tif" );
 		IJ.openImage( impFile.getAbsolutePath() ).show();
 
-		new TrackMateImporterPlugin_().run( csvFile.getAbsolutePath() );
+		new TrackMateImporterPlugin().run( csvFile.getAbsolutePath() );
 	}
 }
