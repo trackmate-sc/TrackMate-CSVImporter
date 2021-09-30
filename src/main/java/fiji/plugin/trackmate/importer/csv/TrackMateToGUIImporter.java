@@ -146,16 +146,15 @@ public class TrackMateToGUIImporter implements Algorithm
 		final SelectionModel selectionModel = new SelectionModel( model );
 		final DisplaySettings ds = DisplaySettingsIO.readUserDefault();
 		final TrackMateWizardSequence sequence = new TrackMateWizardSequence( trackmate, selectionModel, ds );
-		final JFrame frame = sequence.run( "TrackMate importing CSV " + filePath );
-
 		final boolean importTrack = fieldMap.get( KEY_TRACK_COLUMN_NAME ) != null;
 		final String guiState = importTrack ? ConfigureViewsDescriptor.KEY : "SpotFilter";
 		sequence.setCurrent( guiState );
+		final JFrame frame = sequence.run( "TrackMate importing CSV " + filePath );
 
 		frame.setIconImage( TRACKMATE_ICON.getImage() );
 		GuiUtils.positionWindow( frame, imp.getWindow() );
 		frame.setVisible( true );
-		
+
 		final HyperStackDisplayer view = new HyperStackDisplayer( model, selectionModel, settings.imp, ds );
 		view.render();
 
