@@ -9,7 +9,7 @@
 	</parent>
 
 	<artifactId>TrackMate-CSVImporter</artifactId>
-	<version>2.0.1-SNAPSHOT</version>
+	<version>3.0.1-SNAPSHOT</version>
 
 	<name>TrackMate CSV Importer</name>
 	<description>Import detections and tracks from a CSV file into TrackMate.</description>
