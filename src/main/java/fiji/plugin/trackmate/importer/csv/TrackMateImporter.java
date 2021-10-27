@@ -563,8 +563,7 @@ public class TrackMateImporter
 	private static Settings createSettingsFromImp( final ImagePlus imp, final Logger logger )
 	{
 		logger.log( "Creating settings from opened ImagePlus.\n" );
-		final Settings settings = new Settings();
-		settings.setFrom( imp );
+		final Settings settings = new Settings( imp );
 		return settings;
 	}
 
