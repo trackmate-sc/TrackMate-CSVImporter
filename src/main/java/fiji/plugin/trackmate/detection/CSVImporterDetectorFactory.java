@@ -403,7 +403,7 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 		ok = ok & checkParameter( settings, KEY_Z_COLUMN_NAME, String.class, errorHolder );
 		ok = ok & checkParameter( settings, KEY_FRAME_COLUMN_NAME, String.class, errorHolder );
 		ok = ok & checkParameter( settings, KEY_RADIUS, Double.class, errorHolder );
-		final List< String > mandatoryKeys = new ArrayList< String >();
+		final List< String > mandatoryKeys = new ArrayList<>();
 		mandatoryKeys.add( KEY_FILE_PATH );
 		mandatoryKeys.add( KEY_RADIUS );
 		mandatoryKeys.add( KEY_X_COLUMN_NAME );
@@ -413,7 +413,7 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 		mandatoryKeys.add( KEY_X_ORIGIN );
 		mandatoryKeys.add( KEY_Y_ORIGIN );
 		mandatoryKeys.add( KEY_Z_ORIGIN );
-		final List< String > optionalKeys = new ArrayList< String >();
+		final List< String > optionalKeys = new ArrayList<>();
 		optionalKeys.add( KEY_ID_COLUMN_NAME );
 		optionalKeys.add( KEY_NAME_COLUMN_NAME );
 		optionalKeys.add( KEY_QUALITY_COLUMN_NAME );
@@ -422,6 +422,12 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 			errorMessage = errorHolder.toString();
 
 		return ok;
+	}
+
+	@Override
+	public CSVImporterDetectorFactory< T > copy()
+	{
+		return new CSVImporterDetectorFactory<>();
 	}
 
 	/*
