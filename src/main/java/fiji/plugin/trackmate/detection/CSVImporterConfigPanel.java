@@ -118,8 +118,8 @@ public class CSVImporterConfigPanel extends ConfigurationPanel
 	public CSVImporterConfigPanel( final Settings setting, final Model model )
 	{
 		// Compute origin in physical coordinates.
-		final double dx = setting.dx * setting.xstart;
-		final double dy = setting.dy * setting.ystart;
+		final double dx = setting.dx * setting.getXstart();
+		final double dy = setting.dy * setting.getYstart();
 		final double dz = setting.dz * setting.zstart;
 
 		// Layout GUI.
@@ -623,8 +623,6 @@ public class CSVImporterConfigPanel extends ConfigurationPanel
 		settings.dx = 0.2;
 		settings.dy = 0.2;
 		settings.dz = 1.;
-		settings.xstart = 3;
-		settings.ystart = 13;
 		settings.zstart = 23;
 
 		final Model model = new Model();

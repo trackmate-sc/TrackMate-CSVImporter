@@ -507,10 +507,6 @@ public class TrackMateImporter
 					.orElse( new Length( Double.valueOf( 1. ), UNITS.PIXEL ) )
 					.value().doubleValue();
 			settings.dt = ( null == timeIncrement) ? 1. : timeIncrement.value().doubleValue();
-			settings.xstart = 0;
-			settings.xend = settings.width - 1;
-			settings.ystart = 0;
-			settings.yend = settings.height - 1;
 			settings.zstart = 0;
 			settings.zend = settings.nslices - 1;
 			final File file = new File( imageFile );
