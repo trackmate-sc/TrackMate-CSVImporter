@@ -2,7 +2,7 @@
  * #%L
  * A CSV importer for TrackMate.
  * %%
- * Copyright (C) 2017 - 2021 Institut Pasteur.
+ * Copyright (C) 2017 - 2022 Institut Pasteur.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as
