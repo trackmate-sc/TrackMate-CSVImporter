@@ -5,19 +5,21 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>31.1.0</version>
+		<version>32.0.0</version>
+		<relativePath />
 	</parent>
 
+	<groupId>sc.fiji</groupId>
 	<artifactId>TrackMate-CSVImporter</artifactId>
 	<version>3.1.2-SNAPSHOT</version>
 
 	<name>TrackMate CSV Importer</name>
 	<description>Import detections and tracks from a CSV file into TrackMate.</description>
-	<url>https://github.com/tinevez/TrackMate-CSVImporter</url>
+	<url>https://github.com/trackmate-sc/TrackMate-CSVImporter</url>
 	<inceptionYear>2017</inceptionYear>
 	<organization>
-		<name>Fiji</name>
-		<url>https://fiji.sc/</url>
+		<name>TrackMate</name>
+		<url>https://github.com/trackmate-sc</url>
 	</organization>
 	<licenses>
 		<license>
@@ -27,89 +29,92 @@
 		</license>
 	</licenses>
 
-	<build>
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.8</source>
-					<target>1.8</target>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
 	<developers>
 		<developer>
 			<id>tinevez</id>
 			<name>Jean-Yves Tinevez</name>
-			<email>tinevez@pasteur.fr</email>
+			<url>https://imagej.net/people/tinevez</url>
 			<roles>
+				<role>founder</role>
 				<role>lead</role>
 				<role>developer</role>
+				<role>debugger</role>
+				<role>reviewer</role>
+				<role>support</role>
+				<role>maintainer</role>
 			</roles>
-			<timezone>+1</timezone>
 		</developer>
 	</developers>
-	<contributors><contributor><name>grrrr</name></contributor></contributors>
+	<contributors>
+		<contributor>
+			<name>Curtis Rueden</name>
+			<url>https://imagej.net/people/ctrueden</url>
+			<properties><id>ctrueden</id></properties>
+		</contributor>
+	</contributors>
 
-	<repositories>
-		<repository>
-			<id>imagej.public</id>
-			<url>http://maven.imagej.net/content/groups/public</url>
-		</repository>
-	</repositories>
-	
 	<mailingLists>
 		<mailingList>
-			<name>ImageJ Forum</name>
-			<archive>http://forum.imagej.net/</archive>
+			<name>Image.sc Forum</name>
+			<archive>https://forum.image.sc/tag/trackmate</archive>
 		</mailingList>
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:git@github.com/tinevez/TrackMate-CSVImporter</connection>
-		<developerConnection>scm:git:git@github.com/tinevez/TrackMate-CSVImporter</developerConnection>
+		<connection>scm:git:https://github.com/trackmate-sc/TrackMate-CSVImporter</connection>
+		<developerConnection>scm:git:git@github.com:trackmate-sc/TrackMate-CSVImporter</developerConnection>
 		<tag>HEAD</tag>
-		<url>git@github.com/tinevez/TrackMate-CSVImporter</url>
+		<url>https://github.com/trackmate-sc/TrackMate-CSVImporter</url>
 	</scm>
 	<issueManagement>
-		<system>GitHub issues</system>
-		<url>https://github.com/tinevez/TrackMate-CSVImporter/issues</url>
+		<system>GitHub Issues</system>
+		<url>https://github.com/trackmate-sc/TrackMate-CSVImporter/issues</url>
 	</issueManagement>
 	<ciManagement>
-		<system>Travis CI</system>
-		<url>https://travis-ci.org/tinevez/TrackMate-CSVImporter</url>
+		<system>GitHub Actions</system>
+		<url>https://github.com/trackmate-sc/TrackMate-CSVImporter</url>
 	</ciManagement>
 
 	<properties>
 		<package-name>fiji.plugin.trackmate.importer.csv</package-name>
 		<license.licenseName>gpl_v3</license.licenseName>
-		<license.copyrightOwners>Institut Pasteur.</license.copyrightOwners>
-		<license.projectName>A CSV importer for TrackMate.</license.projectName>
-		<!-- NB: Deploy releases to the ImageJ Maven repository. -->
-		<releaseProfiles>deploy-to-imagej</releaseProfiles>
+		<license.copyrightOwners>TrackMate developers.</license.copyrightOwners>
+		<license.projectName>TrackMate: your buddy for everyday tracking.</license.projectName>
+
+		<!-- NB: Deploy releases to the SciJava Maven repository. -->
+		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
+
+		<commons-csv.version>1.2</commons-csv.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>TrackMate</artifactId>
-			<version>7.7.1</version>
 		</dependency>
+
+		<!-- ImageJ dependencies -->
 		<dependency>
 			<groupId>net.imagej</groupId>
 			<artifactId>ij</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-csv</artifactId>
-			<version>1.2</version>
-		</dependency>
+
+		<!-- Other dependencies -->
 		<dependency>
 			<groupId>ome</groupId>
 			<artifactId>bio-formats_plugins</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-csv</artifactId>
+			<version>${commons-csv.version}</version>
+		</dependency>
 	</dependencies>
-	
-</project>
 
+	<repositories>
+		<repository>
+			<id>scijava.public</id>
+			<url>https://maven.scijava.org/content/groups/public</url>
+		</repository>
+	</repositories>
+</project>
