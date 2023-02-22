@@ -11,7 +11,7 @@
 
 	<groupId>sc.fiji</groupId>
 	<artifactId>TrackMate-CSVImporter</artifactId>
-	<version>3.1.3-SNAPSHOT</version>
+	<version>3.1.3</version>
 
 	<name>TrackMate CSV Importer</name>
 	<description>Import detections and tracks from a CSV file into TrackMate.</description>
@@ -63,7 +63,7 @@
 	<scm>
 		<connection>scm:git:https://github.com/trackmate-sc/TrackMate-CSVImporter</connection>
 		<developerConnection>scm:git:git@github.com:trackmate-sc/TrackMate-CSVImporter</developerConnection>
-		<tag>HEAD</tag>
+		<tag>TrackMate-CSVImporter-3.1.3</tag>
 		<url>https://github.com/trackmate-sc/TrackMate-CSVImporter</url>
 	</scm>
 	<issueManagement>
