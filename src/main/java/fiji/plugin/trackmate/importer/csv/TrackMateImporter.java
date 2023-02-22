@@ -63,7 +63,7 @@ import fiji.plugin.trackmate.features.track.TrackSpeedStatisticsAnalyzer;
 import fiji.plugin.trackmate.features.track.TrackSpotQualityFeatureAnalyzer;
 import fiji.plugin.trackmate.gui.wizard.descriptors.ConfigureViewsDescriptor;
 import fiji.plugin.trackmate.io.TmXmlWriter;
-import fiji.plugin.trackmate.tracking.ManualTrackerFactory;
+import fiji.plugin.trackmate.tracking.manual.ManualTrackerFactory;
 import ij.ImagePlus;
 import loci.common.DebugTools;
 import loci.formats.FormatException;
