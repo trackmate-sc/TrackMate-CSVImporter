@@ -85,13 +85,14 @@
 		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
 
 		<commons-csv.version>1.2</commons-csv.version>
+
+		<TrackMate.version>7.10.2</TrackMate.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>sc.fiji</groupId>
 			<artifactId>TrackMate</artifactId>
-			<version>7.10.2</version>
 		</dependency>
 
 		<!-- ImageJ dependencies -->
