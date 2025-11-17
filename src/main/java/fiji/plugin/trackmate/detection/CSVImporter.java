@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -72,7 +72,7 @@ public class CSVImporter implements OutputAlgorithm< Map< Integer, List< Spot > 
 			final double radius,
 			final String xColumnName, final String yColumnName, final String zColumnName, final String frameColumnName,
 			final String qualityColumn, final String nameColumn, final String idColumn,
-			final double xOrigin, final double yOrigin, final double zOrigin)
+			final double xOrigin, final double yOrigin, final double zOrigin )
 	{
 		this.filePath = filePath;
 		this.radius = radius;
@@ -116,10 +116,11 @@ public class CSVImporter implements OutputAlgorithm< Map< Integer, List< Spot > 
 
 		try
 		{
-			final CSVFormat csvFormat = CSVFormat
-					.EXCEL
-					.withHeader()
-					.withCommentMarker( '#' );
+			final CSVFormat csvFormat = CSVFormat.EXCEL
+					.builder()
+					.setHeader()
+					.setCommentMarker( '#' )
+					.get();
 			records = csvFormat.parse( in );
 		}
 		catch ( final IOException e )
@@ -208,10 +209,10 @@ public class CSVImporter implements OutputAlgorithm< Map< Integer, List< Spot > 
 					name = record.get( namecol );
 
 				final Spot spot;
-				if (null != idcol)
+				if ( null != idcol )
 				{
 					// Hijack spot IDs: we force ID to match ID provided.
-					final int id = Integer.parseInt(  record.get( idcol ) );
+					final int id = Integer.parseInt( record.get( idcol ) );
 					spot = new Spot( id );
 					spot.putFeature( Spot.POSITION_X, x );
 					spot.putFeature( Spot.POSITION_Y, y );
@@ -275,7 +276,7 @@ public class CSVImporter implements OutputAlgorithm< Map< Integer, List< Spot > 
 				filePath, 30,
 				"x [nm]", "y [nm]", "z [nm]", "frame",
 				"photons", null, null,
-				0., 0., 0.);
+				0., 0., 0. );
 
 		if ( !importer.checkInput() || !importer.process() )
 		{
