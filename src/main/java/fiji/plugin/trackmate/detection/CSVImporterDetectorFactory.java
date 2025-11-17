@@ -8,12 +8,12 @@
  * it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public
  * License along with this program.  If not, see
  * <http://www.gnu.org/licenses/gpl-3.0.html>.
@@ -21,13 +21,9 @@
  */
 package fiji.plugin.trackmate.detection;
 
-import static fiji.plugin.trackmate.io.IOUtils.readDoubleAttribute;
-import static fiji.plugin.trackmate.io.IOUtils.writeAttribute;
-import static fiji.plugin.trackmate.io.IOUtils.writeRadius;
 import static fiji.plugin.trackmate.util.TMUtils.checkMapKeys;
 import static fiji.plugin.trackmate.util.TMUtils.checkParameter;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,17 +32,12 @@ import java.util.Map;
 
 import javax.swing.ImageIcon;
 
-import org.jdom2.Element;
 import org.scijava.plugin.Plugin;
 
 import fiji.plugin.trackmate.Model;
 import fiji.plugin.trackmate.Settings;
 import fiji.plugin.trackmate.Spot;
-import fiji.plugin.trackmate.TrackMatePlugIn;
 import fiji.plugin.trackmate.gui.components.ConfigurationPanel;
-import ij.IJ;
-import ij.ImageJ;
-import ij.ImagePlus;
 import net.imagej.ImgPlus;
 import net.imglib2.Interval;
 import net.imglib2.type.NativeType;
@@ -237,10 +228,6 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 
 	public static final Double DEFAULT_RADIUS = Double.valueOf( 1. );
 
-	private String errorMessage;
-
-	private Map< Integer, List< Spot > > spots;
-
 	@Override
 	public String getInfoText()
 	{
@@ -266,103 +253,11 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 	}
 
 	@Override
-	public SpotDetector< T > getDetector( final Interval interval, final int frame )
+	public SpotDetector< T > getDetector( final ImgPlus< T > img, final Map< String, Object > settings, final Interval interval, final int frame )
 	{
-		return new DummySpotDetector( frame );
+		return new DummySpotDetector( settings, frame );
 	}
 
-	@Override
-	public boolean setTarget( final ImgPlus< T > img, final Map< String, Object > settings )
-	{
-		final boolean ok = checkSettings( settings );
-		if ( !ok )
-			return false;
-
-		final String filePath = ( String ) settings.get( KEY_FILE_PATH );
-		final double radius = ( Double ) settings.get( KEY_RADIUS );
-		final String xColumnName = ( String ) settings.get( KEY_X_COLUMN_NAME );
-		final String yColumnName = ( String ) settings.get( KEY_Y_COLUMN_NAME );
-		final String zColumnName = ( String ) settings.get( KEY_Z_COLUMN_NAME );
-		final String frameColumnName = ( String ) settings.get( KEY_FRAME_COLUMN_NAME );
-		final String qualityColumn = ( String ) settings.get( KEY_QUALITY_COLUMN_NAME );
-		final String nameColumn = ( String ) settings.get( KEY_NAME_COLUMN_NAME );
-		final String idColumn = ( String ) settings.get( KEY_ID_COLUMN_NAME );
-		final double xOrigin = ( ( Number ) settings.get( KEY_X_ORIGIN ) ).doubleValue();
-		final double yOrigin = ( ( Number ) settings.get( KEY_Y_ORIGIN ) ).doubleValue();
-		final double zOrigin = ( ( Number ) settings.get( KEY_Z_ORIGIN ) ).doubleValue();
-
-		final CSVImporter importer = new CSVImporter( filePath, radius,
-				xColumnName, yColumnName, zColumnName, frameColumnName,
-				qualityColumn, nameColumn, idColumn,
-				xOrigin, yOrigin, zOrigin );
-
-		if ( !importer.checkInput() || !importer.process() )
-		{
-			this.errorMessage = importer.getErrorMessage();
-			return false;
-		}
-
-		this.spots = importer.getResult();
-
-		return true;
-	}
-
-	@Override
-	public String getErrorMessage()
-	{
-		return errorMessage;
-	}
-
-	@Override
-	public boolean marshall( final Map< String, Object > settings, final Element element )
-	{
-		final StringBuilder errorHolder = new StringBuilder();
-		final boolean ok =
-				writeRadius( settings, element, errorHolder )
-						&& writeAttribute( settings, element, KEY_FILE_PATH, String.class, errorHolder )
-						&& writeAttribute( settings, element, KEY_X_COLUMN_NAME, String.class, errorHolder )
-						&& writeAttribute( settings, element, KEY_Y_COLUMN_NAME, String.class, errorHolder )
-						&& writeAttribute( settings, element, KEY_Z_COLUMN_NAME, String.class, errorHolder )
-						&& writeAttribute( settings, element, KEY_FRAME_COLUMN_NAME, String.class, errorHolder )
-						&& writeAttribute( settings, element, KEY_QUALITY_COLUMN_NAME, String.class, errorHolder )
-						&& writeAttribute( settings, element, KEY_NAME_COLUMN_NAME, String.class, errorHolder )
-						&& writeAttribute( settings, element, KEY_ID_COLUMN_NAME, String.class, errorHolder )
-						&& writeAttribute( settings, element, KEY_X_ORIGIN, Double.class, errorHolder )
-						&& writeAttribute( settings, element, KEY_Y_ORIGIN, Double.class, errorHolder )
-						&& writeAttribute( settings, element, KEY_Z_ORIGIN, Double.class, errorHolder );
-
-		if ( !ok )
-			errorMessage = errorHolder.toString();
-
-		return ok;
-	}
-
-	@Override
-	public boolean unmarshall( final Element element, final Map< String, Object > settings )
-	{
-		settings.clear();
-		final StringBuilder errorHolder = new StringBuilder();
-		boolean ok = true;
-		ok = ok & readDoubleAttribute( element, settings, KEY_RADIUS, errorHolder );
-		ok = ok & readStringAttribute( element, settings, KEY_FILE_PATH, errorHolder );
-		ok = ok & readStringAttribute( element, settings, KEY_X_COLUMN_NAME, errorHolder );
-		ok = ok & readStringAttribute( element, settings, KEY_Y_COLUMN_NAME, errorHolder );
-		ok = ok & readStringAttribute( element, settings, KEY_Z_COLUMN_NAME, errorHolder );
-		ok = ok & readStringAttribute( element, settings, KEY_FRAME_COLUMN_NAME, errorHolder );
-		ok = ok & readStringAttribute( element, settings, KEY_QUALITY_COLUMN_NAME, errorHolder );
-		ok = ok & readStringAttribute( element, settings, KEY_NAME_COLUMN_NAME, errorHolder );
-		ok = ok & readStringAttribute( element, settings, KEY_ID_COLUMN_NAME, errorHolder );
-		ok = ok & readDoubleAttribute( element, settings, KEY_X_ORIGIN, errorHolder );
-		ok = ok & readDoubleAttribute( element, settings, KEY_Y_ORIGIN, errorHolder );
-		ok = ok & readDoubleAttribute( element, settings, KEY_Z_ORIGIN, errorHolder );
-
-		if ( !ok )
-		{
-			errorMessage = errorHolder.toString();
-			return false;
-		}
-		return checkSettings( settings );
-	}
 
 	@Override
 	public ConfigurationPanel getDetectorConfigurationPanel( final Settings settings, final Model model )
@@ -392,39 +287,6 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 	}
 
 	@Override
-	public boolean checkSettings( final Map< String, Object > settings )
-	{
-		boolean ok = true;
-		final StringBuilder errorHolder = new StringBuilder();
-		ok = ok & checkParameter( settings, KEY_FILE_PATH, String.class, errorHolder );
-		ok = ok & checkParameter( settings, KEY_RADIUS, Double.class, errorHolder );
-		ok = ok & checkParameter( settings, KEY_X_COLUMN_NAME, String.class, errorHolder );
-		ok = ok & checkParameter( settings, KEY_Y_COLUMN_NAME, String.class, errorHolder );
-		ok = ok & checkParameter( settings, KEY_Z_COLUMN_NAME, String.class, errorHolder );
-		ok = ok & checkParameter( settings, KEY_FRAME_COLUMN_NAME, String.class, errorHolder );
-		ok = ok & checkParameter( settings, KEY_RADIUS, Double.class, errorHolder );
-		final List< String > mandatoryKeys = new ArrayList<>();
-		mandatoryKeys.add( KEY_FILE_PATH );
-		mandatoryKeys.add( KEY_RADIUS );
-		mandatoryKeys.add( KEY_X_COLUMN_NAME );
-		mandatoryKeys.add( KEY_Y_COLUMN_NAME );
-		mandatoryKeys.add( KEY_Z_COLUMN_NAME );
-		mandatoryKeys.add( KEY_FRAME_COLUMN_NAME );
-		mandatoryKeys.add( KEY_X_ORIGIN );
-		mandatoryKeys.add( KEY_Y_ORIGIN );
-		mandatoryKeys.add( KEY_Z_ORIGIN );
-		final List< String > optionalKeys = new ArrayList<>();
-		optionalKeys.add( KEY_ID_COLUMN_NAME );
-		optionalKeys.add( KEY_NAME_COLUMN_NAME );
-		optionalKeys.add( KEY_QUALITY_COLUMN_NAME );
-		ok = ok & checkMapKeys( settings, mandatoryKeys, optionalKeys, errorHolder );
-		if ( !ok )
-			errorMessage = errorHolder.toString();
-
-		return ok;
-	}
-
-	@Override
 	public CSVImporterDetectorFactory< T > copy()
 	{
 		return new CSVImporterDetectorFactory<>();
@@ -439,8 +301,17 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 
 		private final int frame;
 
-		public DummySpotDetector( final int frame )
+		private final Map< String, Object > settings;
+
+		private String errorMessage;
+
+		private Map< Integer, List< Spot > > spots;
+
+		private long processingTime;
+
+		public DummySpotDetector( final Map< String, Object > settings, final int frame )
 		{
+			this.settings = settings;
 			this.frame = frame;
 		}
 
@@ -456,52 +327,79 @@ public class CSVImporterDetectorFactory< T extends RealType< T > & NativeType< T
 		@Override
 		public boolean checkInput()
 		{
-			return true;
+			boolean ok = true;
+			final StringBuilder errorHolder = new StringBuilder();
+			ok = ok & checkParameter( settings, KEY_FILE_PATH, String.class, errorHolder );
+			ok = ok & checkParameter( settings, KEY_RADIUS, Double.class, errorHolder );
+			ok = ok & checkParameter( settings, KEY_X_COLUMN_NAME, String.class, errorHolder );
+			ok = ok & checkParameter( settings, KEY_Y_COLUMN_NAME, String.class, errorHolder );
+			ok = ok & checkParameter( settings, KEY_Z_COLUMN_NAME, String.class, errorHolder );
+			ok = ok & checkParameter( settings, KEY_FRAME_COLUMN_NAME, String.class, errorHolder );
+			ok = ok & checkParameter( settings, KEY_RADIUS, Double.class, errorHolder );
+			final List< String > mandatoryKeys = new ArrayList<>();
+			mandatoryKeys.add( KEY_FILE_PATH );
+			mandatoryKeys.add( KEY_RADIUS );
+			mandatoryKeys.add( KEY_X_COLUMN_NAME );
+			mandatoryKeys.add( KEY_Y_COLUMN_NAME );
+			mandatoryKeys.add( KEY_Z_COLUMN_NAME );
+			mandatoryKeys.add( KEY_FRAME_COLUMN_NAME );
+			mandatoryKeys.add( KEY_X_ORIGIN );
+			mandatoryKeys.add( KEY_Y_ORIGIN );
+			mandatoryKeys.add( KEY_Z_ORIGIN );
+			final List< String > optionalKeys = new ArrayList<>();
+			optionalKeys.add( KEY_ID_COLUMN_NAME );
+			optionalKeys.add( KEY_NAME_COLUMN_NAME );
+			optionalKeys.add( KEY_QUALITY_COLUMN_NAME );
+			ok = ok & checkMapKeys( settings, mandatoryKeys, optionalKeys, errorHolder );
+			if ( !ok )
+				errorMessage = errorHolder.toString();
+
+			return ok;
 		}
 
 		@Override
 		public boolean process()
 		{
+			final String filePath = ( String ) settings.get( KEY_FILE_PATH );
+			final double radius = ( Double ) settings.get( KEY_RADIUS );
+			final String xColumnName = ( String ) settings.get( KEY_X_COLUMN_NAME );
+			final String yColumnName = ( String ) settings.get( KEY_Y_COLUMN_NAME );
+			final String zColumnName = ( String ) settings.get( KEY_Z_COLUMN_NAME );
+			final String frameColumnName = ( String ) settings.get( KEY_FRAME_COLUMN_NAME );
+			final String qualityColumn = ( String ) settings.get( KEY_QUALITY_COLUMN_NAME );
+			final String nameColumn = ( String ) settings.get( KEY_NAME_COLUMN_NAME );
+			final String idColumn = ( String ) settings.get( KEY_ID_COLUMN_NAME );
+			final double xOrigin = ( ( Number ) settings.get( KEY_X_ORIGIN ) ).doubleValue();
+			final double yOrigin = ( ( Number ) settings.get( KEY_Y_ORIGIN ) ).doubleValue();
+			final double zOrigin = ( ( Number ) settings.get( KEY_Z_ORIGIN ) ).doubleValue();
+
+			final CSVImporter importer = new CSVImporter( filePath, radius,
+					xColumnName, yColumnName, zColumnName, frameColumnName,
+					qualityColumn, nameColumn, idColumn,
+					xOrigin, yOrigin, zOrigin );
+
+			final long start = System.currentTimeMillis();
+			if ( !importer.checkInput() || !importer.process() )
+			{
+				this.errorMessage = importer.getErrorMessage();
+				return false;
+			}
+			this.spots = importer.getResult();
+			final long end = System.currentTimeMillis();
+			this.processingTime = end - start;
 			return true;
 		}
 
 		@Override
 		public String getErrorMessage()
 		{
-			return "";
+			return errorMessage;
 		}
 
 		@Override
 		public long getProcessingTime()
 		{
-			return 0;
+			return processingTime;
 		}
-
-	}
-
-	/*
-	 * STATIC UTILITIES
-	 */
-
-	private static final boolean readStringAttribute( final Element element, final Map< String, Object > settings, final String parameterKey, final StringBuilder errorHolder )
-	{
-		final String str = element.getAttributeValue( parameterKey );
-		if ( null == str )
-		{
-			errorHolder.append( "Attribute " + parameterKey + " could not be found in XML element.\n" );
-			return false;
-		}
-		settings.put( parameterKey, str );
-		return true;
-	}
-
-	public static void main( final String[] args ) throws IOException
-	{
-		ImageJ.main( args );
-		final ImagePlus imp = IJ.openImage( "samples/test_DH1_670_100x_1_49_Microtubules_001-1.30x30.tif" );
-		imp.show();
-//		final Roi roi = new RoiDecoder( "samples/SN4_GEMS1_016_ROI_001.roi" ).getRoi();
-//		imp.setRoi( roi );
-		new TrackMatePlugIn().run( "" );
 	}
 }
